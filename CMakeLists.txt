@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(PROJECT_NAME dictionary)
+set(PROJECT_NAME dictionaries)
 project(${PROJECT_NAME})
 
 if(NOT CMAKE_BUILD_TYPE)

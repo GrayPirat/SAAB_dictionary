@@ -5,7 +5,7 @@
 #include <iosfwd>
 using namespace std;
 
-template<typename KeyData, typename Data>
+template<class KeyData, class Data>
 class Table
 {
 	protected:

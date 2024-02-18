@@ -49,7 +49,6 @@ typename Table <KeyData, Data>::it Table<KeyData, Data>::search(KeyData key)
 		}
 		++iter;
 	}
-	return iter;
 }
 template<typename KeyData, typename Data>
 typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key)
@@ -57,16 +56,17 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 	auto iter = arr.begin();
 	while (iter != arr.end())
 	{
-
+		if (iter->first == key)
+			return iter;
 		return iter;
 		iter++;
 	}
-	return iter;
+	//return iter;
 }
 
-int main() {
 	Table <int, string> a;
 	a.insert(0, "e");
 	
 	cout << a.search(0)->second;
+	a[2];
 }

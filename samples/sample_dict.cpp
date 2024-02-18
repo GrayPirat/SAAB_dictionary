@@ -1,9 +1,5 @@
 #include "dictionary_head.h"
 using namespace std;
-//template<typename KeyData,typename Data>
-//Table<KeyData, Data>::Table() {
-//
-//}
 
 template<typename KeyData, typename Data>
 bool Table<KeyData, Data>::Remove(KeyData key)
@@ -59,17 +55,15 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 	{
 		if (iter->first == key)
 			return iter;
+		return iter;
 		iter++;
 	}
-	//return iter;
+	return iter;
 }
-
-int main() {
-	Table<int,string> a;
-	a.insert(2, "tyty");
-	a.insert(3, "tyty");
-	a.insert(1, "ty");
-	a.Remove(1);
-	//cout<<a[2];
-	//a[2];
+int main(){
+	Table <int, string> a;
+	a.insert(0, "e");
+	
+	cout << a.search(0)->second;
+	a[2];
 }

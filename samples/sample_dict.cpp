@@ -1,7 +1,9 @@
 #include "dictionary_head.h"
 using namespace std;
-template<typename KeyData,typename Data>
 
+
+
+template<typename KeyData, typename Data>
 bool Table<KeyData, Data>::Remove(KeyData key)
 {
 	auto iter = arr.begin();

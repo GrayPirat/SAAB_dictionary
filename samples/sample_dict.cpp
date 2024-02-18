@@ -1,8 +1,6 @@
 #include "dictionary_head.h"
 using namespace std;
 
-
-
 template<typename KeyData, typename Data>
 bool Table<KeyData, Data>::Remove(KeyData key)
 {
@@ -61,7 +59,7 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 		return iter;
 		iter++;
 	}
-	//return iter;
+	return iter;
 }
 int main(){
 	Table <int, string> a;

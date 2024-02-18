@@ -63,7 +63,7 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 	}
 	//return iter;
 }
-
+int main(){
 	Table <int, string> a;
 	a.insert(0, "e");
 	

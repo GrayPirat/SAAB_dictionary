@@ -5,7 +5,7 @@
 #include <iosfwd>
 using namespace std;
 
-template<typename KeyData, typename Data>
+template<class KeyData, class Data>
 class Table
 {
 	protected:
@@ -17,7 +17,7 @@ public:
 	bool Remove(KeyData key); // remove ...
 	it& operator[](KeyData key);// access to line`s data
 	it search(KeyData key);// search for line with it`s key
-	Table();//init constructor
-	Table(const Table& d);//copy constructor
-	~Table();//destructor
+	//Table();//init constructor
+	//Table(const Table& d);//copy constructor
+	//~Table();//destructor
 };

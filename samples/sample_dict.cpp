@@ -42,6 +42,7 @@ typename Table <KeyData, Data>::it Table<KeyData, Data>::search(KeyData key)
 	{
 		if (key == iter->first)
 		{
+			
 			return iter;
 		}
 		++iter;
@@ -54,8 +55,7 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 	auto iter = arr.begin();
 	while (iter != arr.end())
 	{
-		if (iter->first == key)
-			cout << iter->second;
+
 		return iter;
 		iter++;
 	}
@@ -63,10 +63,8 @@ typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key
 }
 
 int main() {
-	Table<int,string> a;
-	a.insert(2, "tyty");
-	a.insert(3, "tyty");
-	a.insert(1, "ty");
-	a.Remove(1);
-	a[2];
+	Table <int, string> a;
+	a.insert(0, "e");
+	
+	cout << a.search(0)->second;
 }

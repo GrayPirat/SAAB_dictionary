@@ -46,7 +46,7 @@ typename Table <KeyData, Data>::it Table<KeyData, Data>::search(KeyData key)
 	{
 		if (key == iter->first)
 		{
-			return iter-;
+			return iter;
 		}
 		++iter;
 	}

@@ -31,7 +31,7 @@ public:
 			++iter;
 		}
 		arr.push_back(make_pair(key, value));
-
+		iter = arr.end() - 1;
 		return iter;
 	}
 
@@ -60,8 +60,7 @@ public:
 			iter++;
 		}
 		Data t;
-		iter = insert(key, t);
-		return iter;
+		return insert(key, t);
 	}
 	it search(KeyData key) // search for line with it`s key
 	{

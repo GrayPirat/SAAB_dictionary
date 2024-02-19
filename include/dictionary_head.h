@@ -17,7 +17,7 @@ protected:
 
 	vector<pair<KeyData, Data>> arr; // dictionary
 public:
-	it& insert(KeyData key, Data value) //insert cacheline 
+	it insert(KeyData key, Data value) //insert cacheline 
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -31,6 +31,7 @@ public:
 			++iter;
 		}
 		arr.push_back(make_pair(key, value));
+
 		return iter;
 	}
 
@@ -56,10 +57,11 @@ public:
 		{
 			if (iter->first == key)
 				return iter;
-			return iter;
 			iter++;
 		}
-		throw EmptyException();
+		Data t;
+		iter = insert(key, t);
+		return iter;
 	}
 	it search(KeyData key) // search for line with it`s key
 	{
@@ -75,8 +77,10 @@ public:
 		}
 	}
 
-	//init constructor
-	Table() {}
+	//constructor
+	Table() {
+	
+	}
 
 	//copy constructor
 	Table(const Table& d) {

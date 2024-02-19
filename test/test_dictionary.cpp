@@ -33,9 +33,11 @@ TEST(Table, table_can_operator)
 	ASSERT_EQ(a.search(2)->second, "tttt");
 }
 
-TEST(Table, access_operator_throws_then_empty) {
+TEST(Table, access_operator_adds_new_key) {
 	Table<int, string> a;
-	ASSERT_ANY_THROW(a[2]);
+	//a[2];
+	a[2]->second = "sas";
+	ASSERT_EQ("sas",a[2]->second);
 }
 
 TEST(Table, can_copy_another_table) {

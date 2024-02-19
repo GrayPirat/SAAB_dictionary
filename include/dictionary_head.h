@@ -62,6 +62,7 @@ public:
 		Data t;
 		return insert(key, t);
 	}
+
 	it search(KeyData key) // search for line with it`s key
 	{
 		auto iter = arr.begin();
@@ -95,4 +96,23 @@ public:
 		arr.clear();
 		arr.shrink_to_fit();
 	}
+};
+
+
+template<class KeyData, class Data>
+class Sorted_Table :protected Table<KeyData, Data> 
+{
+	 it search(KeyData key, KeyData searchkey) override //binary search for a cachelne
+	{
+		 auto l_iter = arr.begin() - 1;
+		 auto r_iter = arr.end();
+		 while (l_iter < r_iter - 1) {
+			 auto m_iter = (l_iter + r_iter) / 2;
+			 if (m_iter->first < searchkey) l_iter = m_iter;
+			 else r_iter = m_iter;
+		 }
+		 return r_iter;
+	}
+
+	 
 };

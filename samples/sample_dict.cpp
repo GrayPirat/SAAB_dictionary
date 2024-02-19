@@ -65,6 +65,5 @@ int main(){
 	Table <int, string> a;
 	a.insert(0, "e");
 	
-	cout << a.search(0)->second;
-
+	cout << a.search(0)->second;s
 }

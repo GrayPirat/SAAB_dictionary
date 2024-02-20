@@ -96,3 +96,54 @@ public:
 		arr.shrink_to_fit();
 	}
 };
+
+
+template<class KeyData, class Data>
+class Sorted_Table :protected Table<KeyData,Data>
+{
+protected:
+	bool comp_given;
+	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
+	comp temp;
+public:
+	Sorted_Table()
+	{
+		comp_given = 0;
+	}
+	Sorted_Table(comp t)
+	{
+		comp_given = 1;
+		temp = t;
+	}
+	void sort_table()
+	{
+		if (comp_given == false)
+		{
+			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)));
+		}
+		else
+		{
+			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)), temp);
+		}
+		
+	}
+	it insert(KeyData key, Data value) override
+	{
+
+	}
+
+	bool Remove(KeyData key) override
+	{
+
+	}
+
+	it operator[](KeyData key) override
+	{
+
+	
+	}
+	it search(KeyData key) override
+	{
+
+	}
+};

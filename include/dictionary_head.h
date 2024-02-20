@@ -17,7 +17,7 @@ protected:
 
 	vector<pair<KeyData, Data>> arr; // dictionary
 public:
-	it insert(KeyData key, Data value) //insert cacheline 
+	virtual it insert(KeyData key, Data value) //insert cacheline 
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -50,7 +50,7 @@ public:
 		return false;
 	}
 
-	it operator[](KeyData key)// access to line`s data
+	virtual it operator[](KeyData key)// access to line`s data
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -62,7 +62,7 @@ public:
 		Data t;
 		return insert(key, t);
 	}
-	it search(KeyData key) // search for line with it`s key
+	virtual it search(KeyData key) // search for line with it`s key
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -112,7 +112,7 @@ public:
 	}
 	Sorted_Table(comp t)
 	{
-		comp_given = 1;
+		comp_given = true;
 		temp = t;
 	}
 	void sort_table()
@@ -139,8 +139,7 @@ public:
 
 	it operator[](KeyData key) override
 	{
-
-	
+		
 	}
 	it search(KeyData key) override
 	{

@@ -62,8 +62,8 @@ using namespace std;
 //	return iter;
 //}
 int main(){
-	Table <int, string> a;
-	a.insert(0, "e");
+	Sorted_Table <int, string> a;
+	a.search(2);
 	
-	cout << a.search(0)->second;s
+	
 }

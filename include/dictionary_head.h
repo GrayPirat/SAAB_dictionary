@@ -17,7 +17,7 @@ protected:
 
 	vector<pair<KeyData, Data>> arr; // dictionary
 public:
-	it insert(KeyData key, Data value) //insert cacheline 
+	virtual it insert(KeyData key, Data value) //insert cacheline 
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -35,7 +35,7 @@ public:
 		return iter;
 	}
 
-	bool Remove(KeyData key) // remove ...
+	virtual bool Remove(KeyData key) // remove ...
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -50,7 +50,7 @@ public:
 		return false;
 	}
 
-	it operator[](KeyData key)// access to line`s data
+	virtual it operator[](KeyData key)// access to line`s data
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -62,8 +62,7 @@ public:
 		Data t;
 		return insert(key, t);
 	}
-
-	it search(KeyData key) // search for line with it`s key
+	virtual it search(KeyData key) // search for line with it`s key
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -100,19 +99,57 @@ public:
 
 
 template<class KeyData, class Data>
-class Sorted_Table :protected Table<KeyData, Data> 
+class Sorted_Table :protected Table<KeyData,Data>
 {
-	 it search(KeyData key, KeyData searchkey) override //binary search for a cachelne
+protected:
+	bool comp_given;
+	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
+	comp temp;
+public:
+	Sorted_Table()
 	{
-		 auto l_iter = arr.begin() - 1;
-		 auto r_iter = arr.end();
-		 while (l_iter < r_iter - 1) {
-			 auto m_iter = (l_iter + r_iter) / 2;
-			 if (m_iter->first < searchkey) l_iter = m_iter;
-			 else r_iter = m_iter;
-		 }
-		 return r_iter;
+		comp_given = 0;
+	}
+	Sorted_Table(comp t)
+	{
+		comp_given = true;
+		temp = t;
+	}
+	void sort_table()
+	{
+		if (comp_given == false)
+		{
+			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)));
+		}
+		else
+		{
+			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)), temp);
+		}
+		
+	}
+	it insert(KeyData key, Data value) override
+	{
+
 	}
 
-	 
+	bool Remove(KeyData key) override
+	{
+
+	}
+
+	it operator[](KeyData key) override
+	{
+		
+	}
+	it search(KeyData key) override
+	{
+		auto l_iter = arr.begin() - 1;
+		auto r_iter = arr.end();
+		while (l_iter < r_iter - 1) {
+			auto m_iter = (l_iter + r_iter) / 2;
+			if (m_iter->first < key) l_iter = m_iter;
+			else r_iter = m_iter;
+		}
+		return r_iter;
+	}
 };

@@ -35,7 +35,7 @@ public:
 		return iter;
 	}
 
-	bool Remove(KeyData key) // remove ...
+	virtual bool Remove(KeyData key) // remove ...
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -143,6 +143,13 @@ public:
 	}
 	it search(KeyData key) override
 	{
-
+		auto l_iter = arr.begin() - 1;
+		auto r_iter = arr.end();
+		while (l_iter < r_iter - 1) {
+			auto m_iter = (l_iter + r_iter) / 2;
+			if (m_iter->first < key) l_iter = m_iter;
+			else r_iter = m_iter;
+		}
+		return r_iter;
 	}
 };

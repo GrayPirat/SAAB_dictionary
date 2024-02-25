@@ -105,6 +105,17 @@ protected:
 	bool comp_given;
 	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
 	comp temp;
+	int f_binar(int prev, it iter, KeyData key)
+	{
+		if (iter+prev>=arr.
+		if ((iter + prev)->first == key)
+			return prev;
+		if ((iter + prev)->first < key)
+			return f_binar(-prev / 2, iter + prev, key);
+		if ((iter + prev)->first > key)
+			return f_binar(prev / 2, iter + prev, key);
+
+	}
 public:
 	Sorted_Table()
 	{
@@ -129,27 +140,46 @@ public:
 	}
 	it insert(KeyData key, Data value) override
 	{
+		auto l_iter = arr.begin();
+		auto r_iter = arr.end();
+		if (arr.size() == 0)
+		{
+			arr.push_back(make_pair(key, value));
+			return arr.begin();
+		}
+
+		int ans = f_binar(arr.size() / 2, l_iter, key);
+		if ((l_iter + ans)->first == key)
+		{
+			(l_iter + ans)->second = value;
+			return l_iter + ans;
+		}
+		else
+		{
+			arr.push_back(make_pair(key, value));
+			l_iter = arr.end() - 1;
+			return l_iter;
+		}
+			
 
 	}
 
-	bool Remove(KeyData key) override
+	/*bool Remove(KeyData key) override
 	{
 
 	}
 
 	it operator[](KeyData key) override
 	{
-		
-	}
+		re
+	}*/
+
+	
 	it search(KeyData key) override
 	{
-		auto l_iter = arr.begin() - 1;
+		auto l_iter = arr.begin();
 		auto r_iter = arr.end();
-		while (l_iter < r_iter - 1) {
-			auto m_iter = (l_iter + r_iter) / 2;
-			if (m_iter->first < key) l_iter = m_iter;
-			else r_iter = m_iter;
-		}
+		int ans = f_binar(arr.size() / 2, l_iter, key);
 		return r_iter;
 	}
 };

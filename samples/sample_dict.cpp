@@ -63,7 +63,7 @@ using namespace std;
 //}
 int main(){
 	Sorted_Table <int, string> a;
-	a.search(2);
-	
+	a.insert(1, "je");
+	a.insert(2, "Be");
 	
 }

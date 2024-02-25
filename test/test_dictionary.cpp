@@ -16,13 +16,13 @@ TEST(Table, table_insert_can_change_field) {
 
 TEST(Table, table_cant_remove_empty) {
 	Table <int, string> a;
-	EXPECT_EQ(a.Remove(2) , false);
+	EXPECT_EQ(a.remove(2) , false);
 }
 
 TEST(Table, table_can_remove) {
 	Table <int, string> a;
 	a.insert(2, "test");
-	EXPECT_EQ(a.Remove(2), true);
+	EXPECT_EQ(a.remove(2), true);
 }
 
 TEST(Table, table_can_operator)
@@ -35,7 +35,6 @@ TEST(Table, table_can_operator)
 
 TEST(Table, access_operator_adds_new_key) {
 	Table<int, string> a;
-	//a[2];
 	a[2]->second = "sas";
 	ASSERT_EQ("sas",a[2]->second);
 }

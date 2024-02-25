@@ -35,7 +35,7 @@ public:
 		return iter;
 	}
 
-	virtual bool Remove(KeyData key) // remove ...
+	virtual bool remove(KeyData key) // remove ...
 	{
 		auto iter = arr.begin();
 		while (iter != arr.end())
@@ -105,40 +105,19 @@ protected:
 	bool comp_given;
 	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
 	comp temp;
-	int f_binar(int prev, it iter, KeyData key)
-	{
-		auto beg = arr.begin();
-		auto end = arr.end();
-		auto mid = arr.begin() + (end - beg) / 2;
-		while (mid != end && *mid != key) {
-			if (key < *mid)
-				end = mid;
-			else
-				beg = mid + 1;
-			mid = beg + (end - beg) / 2;
-
-	}
-	it f_bin(it iter, KeyData key) {
-		auto beg = arr.begin();
-			auto end = arr.end();
-		auto mid = arr.begin() + (end - beg) / 2;
-		while (mid != end && *mid != key) {
-			if (key < *mid)
-				end = mid;
-			else
-				beg = mid + 1;
-			mid = beg + (end - beg) / 2;
-		}
+	
 public:
 	Sorted_Table()
 	{
 		comp_given = 0;
 	}
+
 	Sorted_Table(comp t)
 	{
 		comp_given = true;
 		temp = t;
 	}
+
 	void sort_table()
 	{
 		if (comp_given == false)
@@ -149,8 +128,23 @@ public:
 		{
 			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)), temp);
 		}
-		
 	}
+
+	it f_binar(KeyData key)
+	{
+		auto beg = arr.begin();
+		auto end = arr.end();
+		auto mid = arr.begin() + (end - beg) / 2;
+		while (mid != end && mid->first != key) {
+			if (key < mid->first)
+				end = mid;
+			else
+				beg = mid + 1;
+			mid = beg + (end - beg) / 2;
+		}
+		return mid;
+	}
+
 	it insert(KeyData key, Data value) override
 	{
 		auto l_iter = arr.begin();
@@ -161,38 +155,51 @@ public:
 			return arr.begin();
 		}
 
-		int ans = f_binar(arr.size() / 2, l_iter, key);
-		if ((l_iter + ans)->first == key)
-		{
-			(l_iter + ans)->second = value;
-			return l_iter + ans;
+		auto finded = f_binar(key);
+		if (finded != arr.end()) {
+			if ((finded)->first == key)
+			{
+				(finded)->second = value;
+				return finded;
+			}
 		}
-		else
-		{
+		if (finded == arr.end()) {
 			arr.push_back(make_pair(key, value));
 			l_iter = arr.end() - 1;
 			return l_iter;
 		}
-			
-
+		else {
+			arr.insert(finded, make_pair(key, value));
+			return finded;
+		}
 	}
 
-	/*bool Remove(KeyData key) override
+	bool remove(KeyData key) override
 	{
-
+		if (arr.size() == 0) 
+			return false;
+		auto iter = f_binar(key);
+		if (iter->first == key)
+		{
+			arr.erase(iter);
+			return true;
+		}
+		return false;
 	}
 
 	it operator[](KeyData key) override
 	{
-		re
-	}*/
+		auto iter = f_binar(key);
+		if (iter == arr.end()) {
+			Data t;
+			return insert(key, t);
+		}
+		else
+			return iter;
+	}
 
-	
 	it search(KeyData key) override
 	{
-		auto l_iter = arr.begin();
-		auto r_iter = arr.end();
-		int ans = f_binar(arr.size() / 2, l_iter, key);
-		return r_iter;
+		return f_binar(key);
 	}
 };

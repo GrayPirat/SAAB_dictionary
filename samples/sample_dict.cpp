@@ -1,69 +1,16 @@
 #include "dictionary_head.h"
 using namespace std;
 
-//template<typename KeyData, typename Data>
-//bool Table<KeyData, Data>::Remove(KeyData key)
-//{
-//	auto iter = arr.begin();
-//	
-//	while (iter != arr.end())
-//	{
-//		if (iter->first == key)
-//		{
-//			arr.erase(iter);
-//			return true;
-//		}
-//		++iter;
-//	}
-//	return false;
-//}
-//template<typename KeyData, typename Data>
-//typename Table <KeyData,Data>:: it& Table<KeyData, Data>::insert(KeyData key, Data value)
-//{
-//	auto iter = arr.begin();
-//	while (iter != arr.end())
-//	{
-//
-//		if (iter->first == key)
-//		{
-//			iter->second = value;
-//			return iter;
-//		}
-//		++iter;
-//	}
-//	arr.push_back(make_pair(key, value));
-//	return iter;
-//}
-//template<typename KeyData, typename Data>
-//typename Table <KeyData, Data>::it Table<KeyData, Data>::search(KeyData key)
-//{
-//	auto iter = arr.begin();
-//	while (iter != arr.end())
-//	{
-//		if (key == iter->first)
-//		{
-//			
-//			return iter;
-//		}
-//		++iter;
-//	}
-//}
-//template<typename KeyData, typename Data>
-//typename Table <KeyData, Data>::it& Table<KeyData, Data>::operator[](KeyData key)
-//{
-//	auto iter = arr.begin();
-//	while (iter != arr.end())
-//	{
-//		if (iter->first == key)
-//			return iter;
-//		return iter;
-//		iter++;
-//	}
-//	return iter;
-//}
 int main(){
-	Sorted_Table <int, string> a;
-	a.insert(1, "je");
-	a.insert(2, "Be");
+	Hash_Table<string, int> test;
+	test.insert_hash("haha", 1);
+	test.insert_hash("haha", 3);
+	test.insert_hash("haha", 5);
+	test.insert_hash("bad", 5);
+
+	/*test.remove_hash("haha");*/
+	/*test["bad"]->second;*/
 	
+	/*Hash_Table<int, string> test2;
+	test2.insert_hash(234, "sgsdg");*/
 }

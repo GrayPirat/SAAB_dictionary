@@ -187,7 +187,7 @@ public:
 		return false;
 	}
 
-	it operator[](KeyData key) override
+	it operator[](KeyData key)
 	{
 		auto iter = f_binar(key);
 		if (iter == arr.end()) {

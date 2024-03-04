@@ -210,7 +210,7 @@ class Hash_Table :protected Table<KeyData, Data>
 {
 private:
 
-	typedef vector<vector<pair<KeyData,Data>>> it;
+	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData,Data>>>> it;
 
 	bool Key_str = false;
 	bool Key_vec = false;
@@ -282,16 +282,16 @@ public:
 	{
 		
 		int hash = get_hash(key);
-		
-		for (auto v : arr[hash])
+		auto iter = arr[hash].begin();
+		while (iter != arr[hash].end())
 		{
-			if (v.first == key)
+			if (iter->first == key)
 			{
-				v.second = val;
-				return v;
+				iter->second = val;
+				return iter;
 			}
-				
-				
+			
+
 		}
 		arr[hash].push_back(make_pair(key, val));
 		return arr[hash].end();

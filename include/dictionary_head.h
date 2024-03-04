@@ -187,7 +187,7 @@ public:
 		return false;
 	}
 
-	it operator[](KeyData key) override
+	it operator[](KeyData key)
 	{
 		auto iter = f_binar(key);
 		if (iter == arr.end()) {
@@ -220,7 +220,7 @@ private:
 	const int simple_base = 7;
 	const int table_size = 2203;
 
-	vector<pair<int, vector<Data>>> arr;
+	vector<pair<int, vector<pair<KeyData,Data>>>> arr;
 
 	
 	int get_hash(KeyData key)

@@ -210,7 +210,7 @@ class Hash_Table :protected Table<KeyData, Data>
 {
 private:
 
-	typedef _Vector_const_iterator<_Vector_val<_Simple_types<pair<int, vector<Data>>>>> it;
+	typedef vector<vector<pair<KeyData,Data>>> it;
 
 	bool Key_str = false;
 	bool Key_vec = false;
@@ -218,21 +218,23 @@ private:
 	bool Key_double = false;
 	
 	const int simple_base = 7;
-	const int table_size = 2203;
+	int table_size = 0;
 
-	vector<pair<int, vector<pair<KeyData,Data>>>> arr;
+	vector<vector<pair<KeyData,Data>>> arr;
 
 	
 	int get_hash(KeyData key)
 	{
 		int ans = 0;
+		
 		if (Key_vec)
 		{
 			for (int i = 0; i < key.size(); i++)
 			{
-				ans += (int)(key[i]) * pow(simple_base, i);
+				ans += key[i] * pow(simple_base, i);
 			}
 		}
+		
 		if (Key_str)
 		{
 			for (int i = 0; i < key.size(); i++)
@@ -246,7 +248,7 @@ private:
 		}
 		if (Key_double)
 		{
-			string temp = (string)(key);
+			string temp = "";/*  to_string(key);*/
 			string temp2 = "";
 			for (int i = 0; i < temp.size(); i++)
 			{
@@ -261,7 +263,7 @@ private:
 	}
 
 public:
-	Hash_Table()
+	Hash_Table(int n)
 	{
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
@@ -271,73 +273,74 @@ public:
 			Key_int = true;
 		if (is_same_v<KeyData, double>)
 			Key_double = true;
+
+		this->arr = vector<vector<pair<KeyData, Data>>>(n);
+		this->table_size = n;
 	}
 	
 	it insert_hash(KeyData key, Data val)
 	{
-		auto iter = arr.begin();
+		
 		int hash = get_hash(key);
 		
-		while (iter != arr.end())
+		for (auto v : arr[hash])
 		{
-			if (iter->first == hash)
+			if (v.first == key)
 			{
-				iter->second.push_back(val);
-				return iter;
+				v.second = val;
+				return v;
 			}
-			iter++;
+				
+				
 		}
-		vector<Data> a;
-		arr.push_back(make_pair(hash, a));
-		iter = arr.end() - 1;
-		iter->second.push_back(val);
-		return iter;
+		arr[hash].push_back(make_pair(key, val));
+		return arr[hash].end();
 	}
 
-	bool remove_hash(KeyData key) // remove ... fully casheline idk if i should`ve make it more specific
-	{
-		auto iter = arr.begin();
-		auto hash = get_hash(key);
-		while (iter != arr.end())
-		{
-			if (iter->first == hash)
-			{
-				arr.erase(iter);
-				return true;
-			}
-			++iter;
-		}
-		return false;
-	}
+	//bool remove_hash(KeyData key) // remove ... fully casheline idk if i should`ve make it more specific
+	//{
+	//	auto iter = arr.begin();
+	//	auto hash = get_hash(key);
+	//	while (iter != arr.end())
+	//	{
+	//		if (iter->first == hash)
+	//		{
+	//			arr.erase(iter);
+	//			return true;
+	//		}
+	//		++iter;
+	//	}
+	//	return false;
+	//}
 
-	it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
-	{
-		auto iter = arr.begin();
-		auto hash = get_hash(key);
-		while (iter != arr.end())
-		{
-			if (iter->first == hash)
-				return iter;
-			iter++;
-		}
-		vector<Data> a;
-		arr.push_back(make_pair(hash, a));
-		iter = arr.end()--;
-		
-		return iter;
-	}
+	//it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
+	//{
+	//	auto iter = arr.begin();
+	//	auto hash = get_hash(key);
+	//	while (iter != arr.end())
+	//	{
+	//		if (iter->first == hash)
+	//			return iter;
+	//		iter++;
+	//	}
+	//	vector<Data> a;
+	//	arr.push_back(make_pair(hash, a));
+	//	iter = arr.end()--;
+	//	
+	//	return iter;
+	//}
 
-	it search_hash(KeyData key) // search for line with it`s key
-	{
-		auto iter = arr.begin();
-		auto hash = get_hash(key);
-		while (iter != arr.end())
-		{
-			if (hash == iter->first)
-			{
-				return iter;
-			}
-			++iter;
-		}
-	}
+	//it search_hash(KeyData key) // search for line with it`s key
+	//{
+	//	auto iter = arr.begin();
+	//	auto hash = get_hash(key);
+	//	while (iter != arr.end())
+	//	{
+	//		if (hash == iter->first)
+	//		{
+	//			return iter;
+	//		}
+	//		++iter;
+	//	}
+	//}
 };

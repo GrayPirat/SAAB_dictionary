@@ -4,7 +4,8 @@
 TEST(Hash_Table, hash_can_insert) {
 	Hash_Table<int, string> a;
 	a.insert_hash(234,"gold");
-	EXPECT_EQ(a.search_hash(234)->second, "gold");
+	ADD_FAILURE();
+	//EXPECT_EQ(a.search_hash(234)->second, "gold");
 }
 
 TEST(Hash_Table, hash_can_insert_in_same_hash) {

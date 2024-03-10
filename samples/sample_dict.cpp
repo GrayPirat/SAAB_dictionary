@@ -7,9 +7,11 @@ int main(){
 	test.insert_hash("haha", 3);
 	test.insert_hash("haha", 5);
 	test.insert_hash("bad", 5);
+	test.remove_hash("bad");
+	test.search_hash("bad");
 
-	/*test.remove_hash("haha");
-	test["bad"]->second;
-	*/
+	test["bad"]->second = 5;
 	
+
+
 }

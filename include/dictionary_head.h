@@ -229,6 +229,7 @@ private:
 		
 		if (Key_vec)
 		{
+
 			for (int i = 0; i < key.size(); i++)
 			{
 				ans += key[i] * pow(simple_base, i);
@@ -290,57 +291,64 @@ public:
 				iter->second = val;
 				return iter;
 			}
-			
+			iter++;
 
 		}
 		arr[hash].push_back(make_pair(key, val));
-		return arr[hash].end();
+		iter = arr[hash].end();
+		iter--;
+		return iter;
 	}
 
-	//bool remove_hash(KeyData key) // remove ... fully casheline idk if i should`ve make it more specific
-	//{
-	//	auto iter = arr.begin();
-	//	auto hash = get_hash(key);
-	//	while (iter != arr.end())
-	//	{
-	//		if (iter->first == hash)
-	//		{
-	//			arr.erase(iter);
-	//			return true;
-	//		}
-	//		++iter;
-	//	}
-	//	return false;
-	//}
+	bool remove_hash(KeyData key) // remove ... casheline fully  idk if i should`ve make it more specific
+	{
+		
+		auto hash = get_hash(key);
+		auto iter = arr[hash].begin();
+		while (iter != arr[hash].end())
+		{
+			if (iter->first == key)
+			{
+				arr[hash].erase(iter);
+				return true;
+			}
+			iter++;
 
-	//it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
-	//{
-	//	auto iter = arr.begin();
-	//	auto hash = get_hash(key);
-	//	while (iter != arr.end())
-	//	{
-	//		if (iter->first == hash)
-	//			return iter;
-	//		iter++;
-	//	}
-	//	vector<Data> a;
-	//	arr.push_back(make_pair(hash, a));
-	//	iter = arr.end()--;
-	//	
-	//	return iter;
-	//}
+		}
+		return false;
+	}
 
-	//it search_hash(KeyData key) // search for line with it`s key
-	//{
-	//	auto iter = arr.begin();
-	//	auto hash = get_hash(key);
-	//	while (iter != arr.end())
-	//	{
-	//		if (hash == iter->first)
-	//		{
-	//			return iter;
-	//		}
-	//		++iter;
-	//	}
-	//}
+	it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
+	{
+		
+		auto hash = get_hash(key);
+		auto iter = arr[hash].begin();
+		while (iter != arr[hash].end())
+		{
+			if (iter->first == key)
+			{
+				return iter;
+			}
+
+			iter++;
+		}
+		Data t = NULL;
+		return insert_hash(key, t);
+	}
+
+	it search_hash(KeyData key) // search for line with it`s key
+	{
+		auto hash = get_hash(key);
+		auto iter = arr[hash].begin();
+		while (iter != arr[hash].end())
+		{
+			if (iter->first == key)
+			{
+				return iter;
+			}
+
+			iter++;
+		}
+		return iter;
+	}
 };

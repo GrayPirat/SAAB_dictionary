@@ -223,19 +223,26 @@ private:
 	vector<vector<pair<KeyData,Data>>> arr;
 
 	
-	int get_hash(KeyData key)
+	int get_hash(vector<int> key)
 	{
+
 		int ans = 0;
-		
 		if (Key_vec)
 		{
-
-			for (int i = 0; i < key.size(); i++)
+			try
 			{
-				ans += key[i] * pow(simple_base, i);
+				for (int i = 0; i < key.size(); i++)
+				{
+					ans += key[i] * pow(simple_base, i);
+				}
 			}
+			return ans % table_size;;
 		}
-		
+
+	}
+	int get_hash(string key)
+	{
+		int ans = 0;
 		if (Key_str)
 		{
 			for (int i = 0; i < key.size(); i++)
@@ -243,10 +250,21 @@ private:
 				ans += (int)(key[i]) * pow(simple_base, i);
 			}
 		}
-		if (Key_int)
-		{
-			ans = clock();
-		}
+		return ans % table_size;;
+	}
+	int get_hash(int key)
+	{
+		int ans = 0;
+		ans >> 13;
+		ans << 4;
+		ans >> 58;
+		ans ^= (1 << 5);
+		ans = ~ans;
+		return abs(ans % table_size);
+	}
+	int get_hash(double key)
+	{
+		int ans = 0;
 		if (Key_double)
 		{
 			string temp = "";/*  to_string(key);*/

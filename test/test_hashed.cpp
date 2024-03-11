@@ -4,14 +4,13 @@
 TEST(Hash_Table, hash_can_insert) {
 	Hash_Table<int, string> a(200);
 	a.insert_hash(234,"gold");
-	ADD_FAILURE();
-	EXPECT_EQ(a.search_hash(234)->second, "gold");
+	ASSERT_EQ(a.search_hash(234)->second, "gold");
 }
 
-//TEST(Hash_Table, hash_can_insert_in_same_hash) {
-//	ADD_FAILURE();
-//}
-//
+TEST(Hash_Table, hash_can_insert_in_same_hash) {
+	ADD_FAILURE();
+}
+
 //TEST(Hash_Table, hash_can_remove) {
 //	ADD_FAILURE();
 //}

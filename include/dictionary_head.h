@@ -267,7 +267,8 @@ private:
 		int ans = 0;
 		if (Key_double)
 		{
-			string temp = "";/*  to_string(key);*/
+
+			string temp = to_string(key);/*  to_string(key);*/
 			string temp2 = "";
 			for (int i = 0; i < temp.size(); i++)
 			{
@@ -350,7 +351,7 @@ public:
 
 			iter++;
 		}
-		Data t = NULL;
+		Data t;
 		return insert_hash(key, t);
 	}
 

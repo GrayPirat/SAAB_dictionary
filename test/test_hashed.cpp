@@ -4,6 +4,7 @@
 TEST(Hash_Table, hash_can_insert) {
 	Hash_Table<int, string> a(200);
 	a.insert_hash(234,"gold");
+	a++;
 	ASSERT_EQ(a.search_hash(234)->second, "gold");
 }
 
@@ -41,4 +42,21 @@ TEST(Hash_Table, hash_can_double_insert) {
 	Hash_Table<double, string> a(213);
 	a.insert_hash(2.345, "a");
 	ASSERT_EQ(a.search_hash(2.345)->second, "a");
+}
+
+TEST(Hash_Table, hash_iterator_test) {
+	Hash_Table<int, int> a(200);
+	int i = 0;
+	a.insert_hash(0, 0);
+	a.insert_hash(1, 207);
+	a.insert_hash(2, 0);
+	a.insert_hash(3, 0);
+	//auto itet_b;// = a.begin();
+	//while (itet_b != itet_b.end()) {
+	//	//EXPECT_EQ(itet_b->first, a[i]->first);
+	//	//EXPECT_EQ(itet_b->second, a[i]->second);
+	//	iter_b..second++;
+	//	itet_b++;
+	//}
+	
 }

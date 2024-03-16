@@ -12,6 +12,7 @@ int main(){
 		test.search_hash("bad");
 
 		test["bad"]->second = 5;
+		test.operator++();
 	}
 	
 	

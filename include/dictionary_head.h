@@ -223,20 +223,22 @@ class Hash_Table :protected Table<KeyData, Data>
 private:
 
 	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData,Data>>>> it;
-	typedef std::_Vector_iterator<std::_Vector_val<_Simple_types<vector<pair<KeyData, Data>>>>> big_it;
+	/*typedef std::_Vector_iterator<std::_Vector_val<_Simple_types<vector<pair<KeyData, Data>>>>> big_it;*/
 
 
-	bool Key_str = false;
+	bool Key_str = false; // check if keydata is ...
 	bool Key_vec = false;
 	bool Key_int = false;
 	bool Key_double = false;
 	
-	const int simple_base = 7;
+	bool flag_for_iter = false; // flag for it
+
+	const int simple_base = 7; // for hash
 	int table_size = 0;
 
 	vector<vector<pair<KeyData,Data>>> arr;
 
-	/*big_it b_iter;*/
+
 	it gen_iter;
 	
 	int b_iter = 0;
@@ -256,7 +258,7 @@ private:
 		return ans % table_size;
 
 
-	}
+	} // get ahash
 	int get_hash(string key)
 	{
 		int ans = 0;
@@ -315,7 +317,8 @@ public:
 		this->arr = vector<vector<pair<KeyData, Data>>>(n);
 		this->table_size = n;
 		gen_iter = arr[0].begin();
-		//b_iter = arr.begin();
+		
+
 	}
 	
 
@@ -363,6 +366,7 @@ public:
 		
 		auto hash = get_hash(key);
 		auto iter = arr[hash].begin();
+
 		while (iter != arr[hash].end())
 		{
 			if (iter->first == key)
@@ -372,7 +376,8 @@ public:
 
 			iter++;
 		}
-		Data t;
+
+		Data t=NULL;
 		return insert_hash(key, t);
 	}
 
@@ -393,23 +398,55 @@ public:
 		{
 			throw 123;
 		}
-		return iter;
+
 	}
 
 	it operator++()
 	{
 		auto prev = gen_iter;
+		auto gen_iter_inner = gen_iter;
 		while (b_iter != table_size)
 		{
-			while (gen_iter != arr[b_iter].end())
+			gen_iter_inner = arr[b_iter].begin();
+			while (gen_iter_inner != arr[b_iter].end())
 			{
-				gen_iter++;
-				if (gen_iter != prev)
-					return gen_iter;
+				if (!flag_for_iter)
+				{
+					gen_iter = gen_iter_inner;
+					flag_for_iter = true;
+					return gen_iter_inner;
+				}
+				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)
+				{
+					gen_iter = gen_iter_inner;
+					return gen_iter_inner;
+				}
+				gen_iter_inner++;
 			}
-			gen_iter++;
+			b_iter++;
 		}
-		return gen_iter;
+		b_iter = 0;
+		flag_for_iter = false;
+		while (b_iter != table_size)
+		{
+			gen_iter_inner = arr[b_iter].begin();
+			while (gen_iter_inner != arr[b_iter].end())
+			{
+				if (!flag_for_iter)
+				{
+					gen_iter = gen_iter_inner;
+					flag_for_iter = true;
+					return gen_iter_inner;
+				}
+				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)
+				{
+					gen_iter = gen_iter_inner;
+					return gen_iter_inner;
+				}
+				gen_iter_inner++;
+			}
+			b_iter++;
+		}
 	}
 
 };

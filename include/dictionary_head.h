@@ -74,6 +74,7 @@ public:
 			}
 			++iter;
 		}
+		return arr.end();
 	}
 
 	//constructor
@@ -204,6 +205,17 @@ public:
 	}
 };
 
+template<class KeyData, class Data>
+class Iterator
+{
+	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData, Data>>>> it;
+	
+	it operator++()
+	{
+		
+	}
+};
+
 
 template<class KeyData, class Data>
 class Hash_Table :protected Table<KeyData, Data>
@@ -211,6 +223,8 @@ class Hash_Table :protected Table<KeyData, Data>
 private:
 
 	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData,Data>>>> it;
+	typedef std::_Vector_iterator<std::_Vector_val<_Simple_types<vector<pair<KeyData, Data>>>>> big_it;
+
 
 	bool Key_str = false;
 	bool Key_vec = false;
@@ -222,34 +236,35 @@ private:
 
 	vector<vector<pair<KeyData,Data>>> arr;
 
+	/*big_it b_iter;*/
+	it gen_iter;
 	
+	int b_iter = 0;
+
+
 	int get_hash(vector<int> key)
 	{
 
 		int ans = 0;
-		if (Key_vec)
+
+
+		for (int i = 0; i < key.size(); i++)
 		{
-			try
-			{
-				for (int i = 0; i < key.size(); i++)
-				{
-					ans += key[i] * pow(simple_base, i);
-				}
-			}
-			return ans % table_size;;
+			ans += key[i] * pow(simple_base, i);
 		}
+
+		return ans % table_size;
+
 
 	}
 	int get_hash(string key)
 	{
 		int ans = 0;
-		if (Key_str)
-		{
+
 			for (int i = 0; i < key.size(); i++)
 			{
 				ans += (int)(key[i]) * pow(simple_base, i);
 			}
-		}
 		return ans % table_size;;
 	}
 	int get_hash(int key)
@@ -258,31 +273,34 @@ private:
 		ans >> 13;
 		ans << 4;
 		ans >> 58;
-		ans ^= (1 << 5);
+
+		ans>>27;
 		ans = ~ans;
 		return abs(ans % table_size);
 	}
 	int get_hash(double key)
 	{
 		int ans = 0;
-		if (Key_double)
+	
+		string temp = to_string(key);/*  to_string(key);*/
+		string temp2 = "";
+		for (int i = 0; i < temp.size(); i++)
 		{
-
-			string temp = to_string(key);/*  to_string(key);*/
-			string temp2 = "";
-			for (int i = 0; i < temp.size(); i++)
-			{
-				if (temp[i] != '.')
-					temp2.push_back(temp[i]);
-
-			}
-			ans = stoi(temp2);
+			if (temp[i] != '.')
+				temp2.push_back(temp[i]);
 
 		}
-		return ans % table_size;
+			
+		ans = get_hash(temp2);
+
+		ans = get_hash(ans);
+		return get_hash(ans) % table_size;
 	}
 
 public:
+	
+
+
 	Hash_Table(int n)
 	{
 		if (is_same_v<string,KeyData>)
@@ -296,8 +314,11 @@ public:
 
 		this->arr = vector<vector<pair<KeyData, Data>>>(n);
 		this->table_size = n;
+		gen_iter = arr[0].begin();
+		//b_iter = arr.begin();
 	}
 	
+
 	it insert_hash(KeyData key, Data val)
 	{
 		
@@ -319,7 +340,7 @@ public:
 		return iter;
 	}
 
-	bool remove_hash(KeyData key) // remove ... casheline fully  idk if i should`ve make it more specific
+	bool remove_hash(KeyData key) // removes ... a part of cacheline
 	{
 		
 		auto hash = get_hash(key);
@@ -368,6 +389,27 @@ public:
 
 			iter++;
 		}
+		if (iter == arr[hash].end())
+		{
+			throw 123;
+		}
 		return iter;
 	}
+
+	it operator++()
+	{
+		auto prev = gen_iter;
+		while (b_iter != table_size)
+		{
+			while (gen_iter != arr[b_iter].end())
+			{
+				gen_iter++;
+				if (gen_iter != prev)
+					return gen_iter;
+			}
+			gen_iter++;
+		}
+		return gen_iter;
+	}
+
 };

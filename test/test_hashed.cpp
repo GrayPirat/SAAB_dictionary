@@ -49,14 +49,30 @@ TEST(Hash_Table, hash_iterator_test) {
 	int i = 0;
 	a.insert_hash(0, 0);
 	a.insert_hash(1, 207);
-	a.insert_hash(2, 1);//
+	a.insert_hash(2, 1);
 	a.insert_hash(201, 0);
-	a.operator++()->second = 1;//
-	a.operator++()->second = 1;////
 	a.operator++()->second = 1;
-	a.operator++()->second = 1;//
+	a.operator++()->second = 2;
+	a.operator++()->second = 3;
+	a.operator++()->second = 4;
 	EXPECT_EQ(a.search_hash(0)->second, 1);
 	EXPECT_EQ(a.search_hash(1)->second, 1);
 	EXPECT_EQ(a.search_hash(2)->second, 1);
 	EXPECT_EQ(a.search_hash(201)->second, 1);
+}
+
+TEST(Hash_Table, hash_iterator_test2) {
+	Hash_Table<int, int> a(0);
+	int i = 0;
+	a.insert_hash(0, 0);
+	a.insert_hash(1, 207);
+	a.insert_hash(2, 1);
+	a.insert_hash(201, 1);
+	a.insert_hash(202, 2);
+	a.insert_hash(203, 3);
+	a.insert_hash(204, 4);
+	a.insert_hash(205, 5);
+	a.insert_hash(206, 6);
+	int size = a.size();
+	EXPECT_EQ(size, 4);
 }

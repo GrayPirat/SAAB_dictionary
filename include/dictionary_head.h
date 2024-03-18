@@ -307,6 +307,7 @@ public:
 
 	Hash_Table(int n)
 	{
+		n = std::max(1, n);
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
 		if (is_same_v<KeyData, vector<int>>)
@@ -319,8 +320,6 @@ public:
 		this->arr = vector<vector<pair<KeyData, Data>>>(n);
 		this->table_size = n;
 		gen_iter = arr[0].begin();
-		
-
 	}
 	
 
@@ -328,11 +327,11 @@ public:
 	{
 		int hash = get_hash(key, table_size);
 		if (arr[hash].size() >= mx_inserted) {
-			vector<vector<pair<KeyData, Data>>> temp(table_size*2);
+			vector<vector<pair<KeyData, Data>>> temp((table_size+1)*2);
 			it tmp = operator++();
 			KeyData sav1 = tmp->first;
 			Data sav2 = tmp->second;
-			int new_tabsize = table_size * 2;
+			int new_tabsize = (table_size+1) * 2;
 			hash = get_hash(tmp->first, new_tabsize);
 			temp[hash].push_back(make_pair(sav1, sav2));
 			operator++();
@@ -342,7 +341,7 @@ public:
 				operator++();
 			}
 			arr = temp;
-			table_size *= 2;
+			table_size = (table_size+1)*2;
 		}
 		hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
@@ -360,6 +359,18 @@ public:
 		iter = arr[hash].end();
 		iter--;
 		return iter;
+	}
+
+	long long size() {
+		return table_size;
+	}
+
+	long long number_elem() {
+		long long sum = 0;
+		for (int i = 0; i < table_size; i++) {
+			sum += arr[i].size();
+		}
+		return sum
 	}
 
 	bool remove_hash(KeyData key) // removes ... a part of cacheline

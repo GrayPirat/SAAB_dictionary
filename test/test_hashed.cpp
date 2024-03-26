@@ -56,9 +56,9 @@ TEST(Hash_Table, hash_iterator_test) {
 	a.operator++()->second = 3;
 	a.operator++()->second = 4;
 	EXPECT_EQ(a.search_hash(0)->second, 1);
-	EXPECT_EQ(a.search_hash(1)->second, 1);
-	EXPECT_EQ(a.search_hash(2)->second, 1);
-	EXPECT_EQ(a.search_hash(201)->second, 1);
+	EXPECT_EQ(a.search_hash(1)->second, 2);
+	EXPECT_EQ(a.search_hash(2)->second, 4);
+	EXPECT_EQ(a.search_hash(201)->second, 3);
 }
 
 TEST(Hash_Table, hash_iterator_test2) {
@@ -74,5 +74,5 @@ TEST(Hash_Table, hash_iterator_test2) {
 	a.insert_hash(205, 5);
 	a.insert_hash(206, 6);
 	int size = a.size();
-	EXPECT_EQ(size, 4);
+	EXPECT_EQ(size, 10);
 }

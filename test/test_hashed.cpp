@@ -4,7 +4,7 @@
 TEST(Hash_Table, hash_can_insert) {
 	Hash_Table<int, string> a(200);
 	a.insert_hash(234,"gold");
-	a++;
+	//a++;
 	ASSERT_EQ(a.search_hash(234)->second, "gold");
 }
 
@@ -49,14 +49,30 @@ TEST(Hash_Table, hash_iterator_test) {
 	int i = 0;
 	a.insert_hash(0, 0);
 	a.insert_hash(1, 207);
-	a.insert_hash(2, 0);
-	a.insert_hash(3, 0);
-	//auto itet_b;// = a.begin();
-	//while (itet_b != itet_b.end()) {
-	//	//EXPECT_EQ(itet_b->first, a[i]->first);
-	//	//EXPECT_EQ(itet_b->second, a[i]->second);
-	//	iter_b..second++;
-	//	itet_b++;
-	//}
-	
+	a.insert_hash(2, 1);
+	a.insert_hash(201, 0);
+	a.operator++()->second = 1;
+	a.operator++()->second = 2;
+	a.operator++()->second = 3;
+	a.operator++()->second = 4;
+	EXPECT_EQ(a.search_hash(0)->second, 1);
+	EXPECT_EQ(a.search_hash(1)->second, 1);
+	EXPECT_EQ(a.search_hash(2)->second, 1);
+	EXPECT_EQ(a.search_hash(201)->second, 1);
+}
+
+TEST(Hash_Table, hash_iterator_test2) {
+	Hash_Table<int, int> a(0);
+	int i = 0;
+	a.insert_hash(0, 0);
+	a.insert_hash(1, 207);
+	a.insert_hash(2, 1);
+	a.insert_hash(201, 1);
+	a.insert_hash(202, 2);
+	a.insert_hash(203, 3);
+	a.insert_hash(204, 4);
+	a.insert_hash(205, 5);
+	a.insert_hash(206, 6);
+	int size = a.size();
+	EXPECT_EQ(size, 4);
 }

@@ -242,9 +242,9 @@ private:
 	it gen_iter;
 	
 	int b_iter = 0;
+	const int mx_inserted = 2;
 
-
-	int get_hash(vector<int> key)
+	int get_hash(vector<int> key, int razmer_table)
 	{
 
 		int ans = 0;
@@ -255,11 +255,12 @@ private:
 			ans += key[i] * pow(simple_base, i);
 		}
 
-		return ans % table_size;
+		return ans % razmer_table;
 
 
 	} // get ahash
-	int get_hash(string key)
+
+	int get_hash(string key, int razmer_table)
 	{
 		int ans = 0;
 
@@ -267,20 +268,21 @@ private:
 			{
 				ans += (int)(key[i]) * pow(simple_base, i);
 			}
-		return ans % table_size;;
+		return ans % razmer_table;
 	}
-	int get_hash(int key)
+
+	int get_hash(int key, int razmer_table)
 	{
 		int ans = key;
 		ans >> 13;
 		ans << 4;
 		ans >> 58;
-
 		ans>>27;
 		ans = ~ans;
-		return abs(ans % table_size);
+		return abs(ans % razmer_table);
 	}
-	int get_hash(double key)
+	
+	int get_hash(double key, int razmer_table)
 	{
 		int ans = 0;
 	
@@ -293,10 +295,10 @@ private:
 
 		}
 			
-		ans = get_hash(temp2);
+		ans = get_hash(temp2, razmer_table);
 
-		ans = get_hash(ans);
-		return get_hash(ans) % table_size;
+		ans = get_hash(ans, razmer_table);
+		return get_hash(ans, razmer_table) % razmer_table;
 	}
 
 public:
@@ -305,6 +307,7 @@ public:
 
 	Hash_Table(int n)
 	{
+		n = std::max(1, n);
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
 		if (is_same_v<KeyData, vector<int>>)
@@ -317,15 +320,30 @@ public:
 		this->arr = vector<vector<pair<KeyData, Data>>>(n);
 		this->table_size = n;
 		gen_iter = arr[0].begin();
-		
-
 	}
 	
 
 	it insert_hash(KeyData key, Data val)
 	{
-		
-		int hash = get_hash(key);
+		int hash = get_hash(key, table_size);
+		if (arr[hash].size() >= mx_inserted) {
+			vector<vector<pair<KeyData, Data>>> temp((table_size+1)*2);
+			it tmp = operator++();
+			KeyData sav1 = tmp->first;
+			Data sav2 = tmp->second;
+			int new_tabsize = (table_size+1) * 2;
+			hash = get_hash(tmp->first, new_tabsize);
+			temp[hash].push_back(make_pair(sav1, sav2));
+			operator++();
+			while (sav1 != tmp->first && sav2 != tmp->second) {
+				hash = get_hash(tmp->first, new_tabsize);
+				temp[hash].push_back(make_pair(tmp->first, tmp->second));
+				operator++();
+			}
+			arr = temp;
+			table_size = (table_size+1)*2;
+		}
+		hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
 		while (iter != arr[hash].end())
 		{
@@ -344,10 +362,22 @@ public:
 		return iter;
 	}
 
+	long long size() {
+		return table_size;
+	}
+
+	long long number_elem() {
+		long long sum = 0;
+		for (int i = 0; i < table_size; i++) {
+			sum += arr[i].size();
+		}
+		return sum
+	}
+
 	bool remove_hash(KeyData key) // removes ... a part of cacheline
 	{
 		
-		auto hash = get_hash(key);
+		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
 		while (iter != arr[hash].end())
 		{
@@ -365,7 +395,7 @@ public:
 	it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
 	{
 		
-		auto hash = get_hash(key);
+		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
 
 		while (iter != arr[hash].end())
@@ -378,13 +408,13 @@ public:
 			iter++;
 		}
 
-		Data t=NULL;
+		Data t;
 		return insert_hash(key, t);
 	}
 
 	it search_hash(KeyData key) // search for line with it`s key
 	{
-		auto hash = get_hash(key);
+		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
 		while (iter != arr[hash].end())
 		{
@@ -449,5 +479,4 @@ public:
 			b_iter++;
 		}
 	}
-
 };

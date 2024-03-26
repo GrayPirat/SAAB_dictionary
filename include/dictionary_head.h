@@ -334,14 +334,19 @@ public:
 			int new_tabsize = (table_size+1) * 2;
 			hash = get_hash(tmp->first, new_tabsize);
 			temp[hash].push_back(make_pair(sav1, sav2));
-			operator++();
+			tmp=operator++();
 			while (sav1 != tmp->first && sav2 != tmp->second) {
 				hash = get_hash(tmp->first, new_tabsize);
 				temp[hash].push_back(make_pair(tmp->first, tmp->second));
-				operator++();
+				tmp=operator++();
 			}
+			sav1 = gen_iter->first;
 			arr = temp;
 			table_size = (table_size+1)*2;
+			this->flag_for_iter = false;
+			operator++();
+			while (gen_iter->first != sav1)
+				operator++();
 		}
 		hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
@@ -355,7 +360,25 @@ public:
 			iter++;
 
 		}
-		arr[hash].push_back(make_pair(key, val));
+		if (flag_for_iter==true){
+			auto sav1 = gen_iter->first;
+			arr[hash].push_back(make_pair(key, val));
+			if (hash == b_iter)
+			{
+				flag_for_iter = false;
+				operator++();
+			}
+				
+			
+			while (gen_iter->first != sav1)
+			{
+				operator++();
+			}
+		}
+		else
+		{
+			arr[hash].push_back(make_pair(key, val));
+		}
 		
 		iter = arr[hash].end();
 		iter--;
@@ -436,6 +459,7 @@ public:
 	{
 		auto prev = gen_iter;
 		auto gen_iter_inner = gen_iter;
+		bool flag_for_skip = false;
 		while (b_iter != table_size)
 		{
 			gen_iter_inner = arr[b_iter].begin();
@@ -447,6 +471,12 @@ public:
 					flag_for_iter = true;
 					return gen_iter_inner;
 				}
+				while ((gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)&& !flag_for_skip)
+				{
+					gen_iter_inner++;
+					
+				}
+				flag_for_skip = true;
 				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)
 				{
 					gen_iter = gen_iter_inner;

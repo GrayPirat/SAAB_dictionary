@@ -271,7 +271,7 @@ private:
 	}
 	int get_hash(int key)
 	{
-		int ans = 0;
+		int ans = key;
 		ans >> 13;
 		ans << 4;
 		ans >> 58;
@@ -338,6 +338,7 @@ public:
 
 		}
 		arr[hash].push_back(make_pair(key, val));
+		
 		iter = arr[hash].end();
 		iter--;
 		return iter;

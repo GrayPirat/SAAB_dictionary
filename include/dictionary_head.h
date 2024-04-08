@@ -205,17 +205,6 @@ public:
 	}
 };
 
-template<class KeyData, class Data>
-class Iterator
-{
-	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData, Data>>>> it;
-	
-	it operator++()
-	{
-		
-	}
-};
-
 
 template<class KeyData, class Data>
 class Hash_Table :protected Table<KeyData, Data>
@@ -509,4 +498,27 @@ public:
 			b_iter++;
 		}
 	}
+};
+
+template<class KeyData,class Data>
+class binary_tree:public  Table
+{
+	template<class KeyData,class Data>
+	class TreeNode
+	{
+	protected:
+		Data value;
+
+		TreeNode* left;
+		TreeNode* right;
+		TreeNode* top;
+		
+		TreeNode() :root(NULL);
+		TreeNode(TreeNode* root) : root(root);
+		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
+
+
+	private:
+		TreeNode* root;
+	};
 };

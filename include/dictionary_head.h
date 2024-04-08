@@ -503,7 +503,6 @@ public:
 template<class KeyData,class Data>
 class binary_tree:public  Table<KeyData, Data>
 {
-	template<class KeyData,class Data>
 	class TreeNode
 	{
 	protected:
@@ -513,52 +512,9 @@ class binary_tree:public  Table<KeyData, Data>
 		TreeNode* right;
 		TreeNode* top;
 		
-		TreeNode() : root(NULL) {}
-		TreeNode(TreeNode* root) : root(root) {}
-		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL) {}
-	};
+		TreeNode() :root(NULL);
+		TreeNode(TreeNode* root) : root(root);
+		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
 
-	TreeNode* start_root;
-
-	binary_tree() {
-		start_root->TreeNode();
-	}
-	binary_tree(Data val) {
-		start_root->TreeNode(val);
-	}
-	binary_tree(binary_tree* tree) {
-		start_root = tree->start_root;
-	}
-
-	bool insert(Data val) override {
-		TreeNode* temp = start_root;
-		bool flag_for_tree = true;
-		while(1) {
-			while (val <= temp->value) {
-				if (temp->left != 0) {
-					temp = temp->left;
-				}
-				else {
-					temp->left = TreeNode(val);
-					auto save = temp;
-					temp = temp->left;
-					temp->top = save;
-					return true;
-				}
-			}
-			while (val > temp->value) {
-				if (temp->right != 0) {
-					temp = temp->right;
-				}
-				else {
-					temp->right = TreeNode(val);
-					auto save = temp;
-					temp = temp->right;
-					temp->top = save;
-					return true;
-				}
-			}
-		}
-	}
 
 };

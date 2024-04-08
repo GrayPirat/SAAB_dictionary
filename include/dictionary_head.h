@@ -501,9 +501,8 @@ public:
 };
 
 template<class KeyData,class Data>
-class binary_tree:public  Table
+class binary_tree:public  Table<KeyData,Data>
 {
-	template<class KeyData,class Data>
 	class TreeNode
 	{
 	protected:
@@ -512,13 +511,38 @@ class binary_tree:public  Table
 		TreeNode* left;
 		TreeNode* right;
 		TreeNode* top;
+
+		TreeNode() :root(NULL){}
 		
-		TreeNode() :root(NULL);
-		TreeNode(TreeNode* root) : root(root);
-		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
+		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL) {}
 
 
 	private:
 		TreeNode* root;
+
 	};
+	typedef TreeNode* it;
+	TreeNode* start_root;
+
+	binary_tree()
+	{
+		start_root->TreeNode();
+	}
+	binary_tree(KeyData val)
+	{
+		start_root->TreeNode(val);
+	}
+	binary_tree(binary_tree* tree)
+	{
+		this->start_root = tree->start_root;
+	}
+	it search(KeyData key, Data value) override{}
+
+	bool remove(KeyData val) override
+	{
+		
+	}
+	
+
+
 };

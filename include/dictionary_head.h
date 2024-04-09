@@ -501,7 +501,7 @@ public:
 };
 
 template<class KeyData,class Data>
-class binary_tree:public  Table<KeyData,Data>
+class binary_tree:public  Table<KeyData, Data>
 {
 	class TreeNode
 	{
@@ -511,6 +511,7 @@ class binary_tree:public  Table<KeyData,Data>
 		TreeNode* left;
 		TreeNode* right;
 		TreeNode* top;
+
 
 		TreeNode() :value(NULL) {}
 		
@@ -648,6 +649,10 @@ class binary_tree:public  Table<KeyData,Data>
 		}
 		return false;
 	}
+		
+		TreeNode() :root(NULL);
+		TreeNode(TreeNode* root) : root(root);
+		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
 
 	it search(Data val) override
 	{

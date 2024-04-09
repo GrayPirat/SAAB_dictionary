@@ -511,10 +511,189 @@ class binary_tree:public  Table<KeyData, Data>
 		TreeNode* left;
 		TreeNode* right;
 		TreeNode* top;
+
+
+		TreeNode() :value(NULL) {}
+		
+		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL) {}
+
+	};
+
+	typedef TreeNode* it;
+	TreeNode* start_root;
+
+	binary_tree()
+	{
+		start_root->TreeNode();
+	}
+	binary_tree(Data val)
+	{
+		start_root->TreeNode(val);
+	}
+	binary_tree(binary_tree* tree)
+	{
+		this->start_root = tree->start_root;
+	}
+
+
+	bool remove(Data val) override
+	{
+		TreeNode* temp = search(val);
+		if (temp->value != NULL)
+		{
+			//left net right da
+			if (temp->left == NULL && temp->right != NULL)
+			{
+				TreeNode* save = temp;
+				temp = temp->top;
+				save = save->right;
+				save->top = temp;
+				if (save == temp->left)
+				{
+					temp->left = save;
+				}
+				else
+				{
+					temp->right = save;
+				}
+
+
+			}
+			//left da right net
+			else if (temp->left != NULL && temp->right == NULL)
+			{
+				TreeNode* save = temp;
+				temp = temp->top;
+				save = save->left;
+				save->top = temp;
+				if (save == temp->left)
+				{
+					temp->left = save;
+				}
+				else
+				{
+					temp->right = save;
+				}
+			}
+			// tout est la
+			else if (temp->left != NULL && temp->right != NULL)
+			{
+				auto save = temp;
+				auto s_left = temp->left;
+				auto s_right = temp->right;
+				temp = temp->right;
+				bool flag = false;
+				while (!flag)
+				{
+					if (temp->left == NULL)
+						flag++;
+					else
+						temp = temp->left;
+				}
+				//temp = min sprava ->set this branch
+				auto min_r_branch = temp;
+
+				//create brand new node to build evrth
+				TreeNode blank = TreeNode(min_r_branch->value);
+				blank->right = min_r_branch->right;
+				delete temp;
+				// join left branch
+				blank->left = s_left;
+				s_left->top = blank;
+				//join right branch
+				min_r_branch = min_r_brach->top;
+				min_r_branch->left = NULL;
+
+				auto temp = blank;
+				while (temp->right != NULL)
+					temp = temp->right;
+
+				temp->right = s_right;
+				s_right->top = temp;
+				// join main tree
+				auto s_top = save->top;
+				if (s_top->left == save)
+				{
+					s_top->left = blank;
+					blank->top = s_top;
+				}
+				else
+				{
+					s_top->right = blank;
+					blank->top = s_top;
+
+				}
+				// if it dont work properly than try 2 var
+
+				
+			}
+			// leaf
+			else if (temp->left == NULL && temp->right == NULL)
+			{
+				auto save = temp->top;
+				if (save->left == save)
+				{
+					save->left = NULL;
+					temp->top = NULL;
+				}
+				else
+				{
+					save->right = NULL;
+					temp->top = NULL;
+
+				}
+				
+			}
+			return true;
+
+		}
+		return false;
+	}
 		
 		TreeNode() :root(NULL);
 		TreeNode(TreeNode* root) : root(root);
 		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
 
+	it search(Data val) override
+	{
+		TreeNode* temp = start_root;
+		if (temp != NULL)
+		{
+			bool flag_for_rem = true;
+			while (1)
+			{
+				if (temp->value == val)
+					return temp;
 
+				if (temp->value > val)
+				{
+					if (temp->left != NULL)
+					{
+						temp = temp->left;
+					}
+					else
+					{
+						TreeNode ans = TreeNode();
+						ans->top = temp;
+						return ans;
+					}
+						
+				}
+
+				if (temp->value < val)
+				{
+					if (temp->right != NULL)
+					{
+						temp = temp->right;
+					}
+					else
+					{
+						TreeNode ans = TreeNode();
+						ans->top = temp;
+						return ans;
+					}
+				}
+			}
+		}
+	}
 };

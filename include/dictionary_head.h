@@ -3,11 +3,11 @@
 #include<vector>
 #include <string>
 #include <iosfwd>
+#include <windows.h>
+#include<cstdio>
 using namespace std;
 
-struct EmptyException {
-	int lost_key;
-};
+
 
 template<class KeyData, class Data>
 class Table
@@ -204,7 +204,6 @@ public:
 		return f_binar(key);
 	}
 };
-
 
 template<class KeyData, class Data>
 class Hash_Table :protected Table<KeyData, Data>
@@ -500,12 +499,18 @@ public:
 	}
 };
 
+
+
+COORD position, newPosition;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+int x = 0, y = 0;
+
 template<class KeyData,class Data>
 class binary_tree:public  Table<KeyData, Data>
 {
-	class TreeNode
+	struct TreeNode
 	{
-	protected:
+	public:
 		Data value;
 
 		TreeNode* left;
@@ -513,18 +518,61 @@ class binary_tree:public  Table<KeyData, Data>
 		TreeNode* top;
 
 
-		TreeNode() :value(NULL) {}
+		TreeNode() :value(NULL), left(NULL), right(NULL), top(NULL) {}
 		
 		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL) {}
 
 	};
 
+	bool flag_not_null = false;
+
 	typedef TreeNode* it;
+
 	TreeNode* start_root;
 
+	it back_to_root(it temp, it ans)
+	{
+		while (temp != ans)
+			temp = temp->top;
+		return temp;
+	}
+
+	void print_inner(TreeNode* root, COORD position)
+	{
+
+		SetConsoleCursorPosition(hConsole, position);
+		
+		cout << root->value;
+		auto pos = position;
+		if (root->left != NULL)
+		{
+
+			pos.X = position.X - 1;
+			pos.Y = position.Y + 1;
+			SetConsoleCursorPosition(hConsole, pos);
+			cout << '/';
+			pos.X = pos.X - 1;
+			pos.Y = pos.Y + 1;
+			print_inner(root->left, pos);
+			
+		}
+		if (root->right != NULL)
+		{
+			pos.X = position.X + 1;
+			pos.Y = position.Y + 1;
+			SetConsoleCursorPosition(hConsole, pos);
+			cout << '\\';
+			pos.X = pos.X + 1;
+			pos.Y = pos.Y + 1;
+			print_inner(root->right, pos);
+		}
+
+	}
+public:
 	binary_tree()
 	{
-		start_root->TreeNode();
+		start_root=new TreeNode;
+		
 	}
 	binary_tree(Data val)
 	{
@@ -536,9 +584,11 @@ class binary_tree:public  Table<KeyData, Data>
 	}
 
 
-	bool remove(Data val) override
+	bool remove(Data val) 
 	{
-		TreeNode* temp = search(val);
+		TreeNode* temp = search_tree(val);
+		
+
 		if (temp->value != NULL)
 		{
 			//left net right da
@@ -546,17 +596,22 @@ class binary_tree:public  Table<KeyData, Data>
 			{
 				TreeNode* save = temp;
 				temp = temp->top;
-				save = save->right;
-				save->top = temp;
+
 				if (save == temp->left)
 				{
+					save = save->right;
 					temp->left = save;
 				}
 				else
 				{
+					save = save->right;
+					
 					temp->right = save;
+					
 				}
-
+				save->top = temp;
+				temp = back_to_root(temp, start_root);
+				start_root = temp;
 
 			}
 			//left da right net
@@ -564,18 +619,25 @@ class binary_tree:public  Table<KeyData, Data>
 			{
 				TreeNode* save = temp;
 				temp = temp->top;
-				save = save->left;
-				save->top = temp;
+
 				if (save == temp->left)
 				{
+					save = save->left;
 					temp->left = save;
 				}
 				else
 				{
+					save = save->left;
+
 					temp->right = save;
+
 				}
+				save->top = temp;
+				temp = back_to_root(temp, start_root);
+				start_root = temp;
 			}
-			// tout est la
+
+			//tout est la
 			else if (temp->left != NULL && temp->right != NULL)
 			{
 				auto save = temp;
@@ -594,23 +656,43 @@ class binary_tree:public  Table<KeyData, Data>
 				auto min_r_branch = temp;
 
 				//create brand new node to build evrth
-				TreeNode blank = TreeNode(min_r_branch->value);
-				blank->right = min_r_branch->right;
-				delete temp;
-				// join left branch
+				TreeNode* blank = new TreeNode(min_r_branch->value);
+
+				//join right branch
+				if (min_r_branch !=s_right)
+				{
+					blank->right = min_r_branch->right;
+					min_r_branch->right->top = blank;
+
+					temp = blank;
+					s_right->left = NULL;
+
+					
+					while (temp->right != NULL)
+						temp = temp->right;
+
+					temp->right = s_right;
+					s_right->top = temp;
+					temp = back_to_root(temp, blank);
+					blank = temp;
+				}
+				else
+				{
+					if (s_right->right != NULL)
+					{
+						blank->right = s_right->right; 
+						s_right->right->top = blank;
+					}
+						
+				}
+				
+				
+				//join left branch
 				blank->left = s_left;
 				s_left->top = blank;
-				//join right branch
-				min_r_branch = min_r_brach->top;
-				min_r_branch->left = NULL;
+				
 
-				auto temp = blank;
-				while (temp->right != NULL)
-					temp = temp->right;
-
-				temp->right = s_right;
-				s_right->top = temp;
-				// join main tree
+				//join main tree
 				auto s_top = save->top;
 				if (s_top->left == save)
 				{
@@ -623,18 +705,22 @@ class binary_tree:public  Table<KeyData, Data>
 					blank->top = s_top;
 
 				}
-				// if it dont work properly than try 2 var
+				s_top = back_to_root(s_top, start_root);
+				start_root = s_top;
+				//if it dont work properly than try 2 var
 
 				
 			}
-			// leaf
+
+			 //leaf
 			else if (temp->left == NULL && temp->right == NULL)
 			{
 				auto save = temp->top;
-				if (save->left == save)
+				if (save->left == temp)
 				{
 					save->left = NULL;
 					temp->top = NULL;
+					
 				}
 				else
 				{
@@ -642,24 +728,74 @@ class binary_tree:public  Table<KeyData, Data>
 					temp->top = NULL;
 
 				}
+				save = back_to_root(save, start_root);
+				start_root = save;
 				
 			}
 			return true;
 
 		}
+
 		return false;
 	}
-		
-		TreeNode() :root(NULL);
-		TreeNode(TreeNode* root) : root(root);
-		TreeNode(KeyData value) : value(value), left(NULL), right(NULL), top(NULL);
 
-	it search(Data val) override
+	it insert(Data val) 
+	{
+		TreeNode* temp = start_root;
+		bool flag_for_tree = true;
+		if (flag_not_null)
+		{
+			while (1)
+			{
+
+				if (temp->value >= val)
+				{
+					if (temp->left != nullptr)
+					{
+						temp = temp->left;
+					}
+					else
+					{
+						TreeNode* ans = new TreeNode(val);
+
+						ans->top = temp;
+						temp->left = ans;
+						temp = back_to_root(temp,start_root);
+						start_root = temp;
+						return ans;
+					}
+
+				}
+
+				if (temp->value < val)
+				{
+					if (temp->right != nullptr)
+					{
+						temp = temp->right;
+					}
+					else
+					{
+						TreeNode* ans = new TreeNode(val);
+						ans->top = temp;
+						temp->right = ans;
+						temp = back_to_root(temp, start_root);
+						start_root = temp;
+						return ans;
+					}
+				}
+			}
+
+		}
+		else
+			start_root->value = val; flag_not_null = true; return temp;
+			
+	}
+
+	it search_tree(Data val) 
 	{
 		TreeNode* temp = start_root;
 		if (temp != NULL)
 		{
-			bool flag_for_rem = true;
 			while (1)
 			{
 				if (temp->value == val)
@@ -673,7 +809,7 @@ class binary_tree:public  Table<KeyData, Data>
 					}
 					else
 					{
-						TreeNode ans = TreeNode();
+						TreeNode* ans = new TreeNode;
 						ans->top = temp;
 						return ans;
 					}
@@ -688,12 +824,20 @@ class binary_tree:public  Table<KeyData, Data>
 					}
 					else
 					{
-						TreeNode ans = TreeNode();
-						ans->top = temp;
+						TreeNode* ans = new TreeNode;
 						return ans;
 					}
 				}
 			}
 		}
+	}
+
+	void print()
+	{
+		system("cls");
+		position.X = 50;
+		position.Y = 0;
+
+		print_inner(start_root, position);
 	}
 };

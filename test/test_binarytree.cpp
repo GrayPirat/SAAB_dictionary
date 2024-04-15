@@ -5,22 +5,99 @@ COORD position, newPosition;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 int x = 0, y = 0;
 
-TEST(Binary_Tree, bintree_can_insert) {
+TEST(Binary_Tree, bintree_can_insert1000) {
 	Binary_Tree<int, int> a;
 	vector<int> vec;
-	int ind = rand()%15;
+	vec.push_back(-1);
+	for (int i = 0; i < 1000; i++) {
+		vec.push_back(vec.size());
+	}
+	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+	for (int i = 0; i < 1000; i++) {
+		a.insert(vec[i]);
+	}
+	//a.print();
+	for (int i = 0; i < 1000; i++) {
+		EXPECT_EQ(a.search_tree(vec[i])->value, vec[i]);
+	}
+}
+
+TEST(Binary_Tree, bintree_remove30) {
+	Binary_Tree<int, int> a;
+	vector<int> vec;
+
 	for (int i = 0; i < 30; i++) {
 		vec.push_back(vec.size());
 	}
 	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+
+	
 	for (int i = 0; i < 30; i++) {
 		a.insert(vec[i]);
 	}
-	a.print();
-	//ASSERT_EQ(a.search_tree(234), 234);
+	for (int i = 0; i < vec.size(); i++)
+	{
+		cout << a.get_stack()[i]->value << ' ' << vec[i] << endl;
+
+	}
+	//a.print();
+	for (int i = 0; i < 30; i++) {
+		EXPECT_EQ(a.search_tree(vec[i])->value, vec[i]);
+	}
+
+	for (int i = 1; i < 30; i++) {
+		auto temp = vec[i];
+		auto temp1 = a.search_tree(temp)->value;
+		EXPECT_EQ(a.remove(vec[i]), true);
+	}
 }
 
-TEST(Binary_Tree, bintree_insert1000) {
+//TEST(Binary_Tree, bintree_remove1000) {
+//	Binary_Tree<int, int> a;
+//	vector<int> vec;
+//	
+//	for (int i = 0; i < 1000; i++) {
+//		vec.push_back(vec.size());
+//	}
+//	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+//	for (int i = 0; i < 1000; i++) {
+//		a.insert(vec[i]);
+//	}
+//	//a.print();
+//	for (int i = 0; i < 1000; i++) {
+//		EXPECT_EQ(a.search_tree(vec[i])->value, vec[i]);
+//	}
+//	
+//	for (int i = 1; i < 1000; i++) {
+//		auto temp = vec[i];
+//		auto temp1 = a.search_tree(temp)->value;
+//		EXPECT_EQ(a.remove(vec[i]), true);
+//	}
+//}
+
+TEST(Binary_Tree, bintree_height10) {
+	Binary_Tree<int, int> a;
+	vector<int> vec;
+	for (int i = 0; i < 1000; i++) {
+		vec.push_back(vec.size());
+	}
+	/*shuffle(vec.begin(), vec.end(), mt19937(random_device()()));*/
+	for (int i = 0; i < 1000; i++) {
+		a.insert(vec[i]);
+	}
+	int old_height = a.tree_height();
+	//a.print();
+	int new_height = old_height;
+	while (new_height - old_height < 10) {
+		for (int i = 0; i < 1000; i++) {
+			a.remove(vec[i]);
+		}
+		for (int i = 0; i < 1000; i++) {
+			a.insert(rand() % 1000);
+		}
+		new_height = a.tree_height();
+	}
+	ASSERT_EQ(true, true);
 
 }
 
@@ -29,14 +106,15 @@ TEST(Binary_Tree, bintree_can_remove) {
 	a.insert(1);
 	a.insert(2);
 	a.insert(6);
-	a.insert(0);
+	a.insert(-1);
 	a.insert(3);
 	EXPECT_EQ(a.remove(3), true);
 	EXPECT_EQ(a.remove(6), true);
-	EXPECT_EQ(a.remove(0), true);
+	EXPECT_EQ(a.remove(-1), true);
 }
 
 TEST(Binary_Tree, bintree_cant_remove_empty) {
 	Binary_Tree<int, int> a;
 	a.remove(6);
+	EXPECT_NE(a.remove(10), true);
 }

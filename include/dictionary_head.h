@@ -1,10 +1,12 @@
 #pragma once
 #include<iostream>
 #include<vector>
-#include <string>
-#include <iosfwd>
-#include <windows.h>
+#include<random>
+#include<string>
+#include<iosfwd>
+#include<windows.h>
 #include<cstdio>
+#include<limits>
 using namespace std;
 
 
@@ -295,7 +297,7 @@ public:
 
 	Hash_Table(int n)
 	{
-		n = std::max(1, n);
+		n = max(1, n);
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
 		if (is_same_v<KeyData, vector<int>>)
@@ -501,12 +503,9 @@ public:
 
 
 
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
 
 template<class KeyData, class Data>
-class binary_tree :public  Table<KeyData, Data>
+class Binary_Tree :public  Table<KeyData, Data>
 {
 	struct TreeNode
 	{
@@ -518,7 +517,7 @@ class binary_tree :public  Table<KeyData, Data>
 		TreeNode* top;
 
 		bool visited = false;
-		TreeNode() :value(NULL), left(NULL), right(NULL), top(NULL), visited(false) {}
+		TreeNode() :value(INT_MAX), left(NULL), right(NULL), top(NULL), visited(false) {}
 
 		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL), visited(false) {}
 	};
@@ -526,6 +525,8 @@ class binary_tree :public  Table<KeyData, Data>
 	bool  flag_not_null = false;
 
 	typedef TreeNode* it;
+	
+	
 
 	TreeNode* start_root;
 	//iterator prop
@@ -593,26 +594,29 @@ class binary_tree :public  Table<KeyData, Data>
 
 	void remaster_stack(TreeNode* root)
 	{
-		stack.push_back(root);
-
-		if (root->left != NULL)
+		if (root != NULL)
 		{
-			remaster_stack(root->left);
+			stack.push_back(root);
+
+			if (root->left != NULL)
+			{
+				remaster_stack(root->left);
+			}
+			if (root->right != NULL)
+				remaster_stack(root->right);
 		}
-		if (root->right != NULL)
-			remaster_stack(root->right);
 	}
 public:
-	binary_tree()
+	Binary_Tree()
 	{
 		start_root = new TreeNode;
 
 	}
-	binary_tree(Data val)
+	Binary_Tree(Data val)
 	{
 		start_root->TreeNode(val);
 	}
-	binary_tree(binary_tree* tree)
+	Binary_Tree(Binary_Tree* tree)
 	{
 		this->start_root = tree->start_root;
 	}
@@ -623,7 +627,7 @@ public:
 		TreeNode* temp = search_tree(val);
 
 
-		if (temp->value != NULL)
+		if (temp->value != INT_MAX)
 		{
 			for (int i = 0; i < stack.size(); i++)
 			{
@@ -636,47 +640,65 @@ public:
 			//left net right da
 			if (temp->left == NULL && temp->right != NULL)
 			{
-				TreeNode* save = temp;
-				temp = temp->top;
-
-				if (save == temp->left)
+				if (temp != start_root)
 				{
-					save = save->right;
-					temp->left = save;
+					TreeNode* save = temp;
+					temp = temp->top;
+
+					if (save == temp->left)
+					{
+						save = save->right;
+						temp->left = save;
+					}
+					else
+					{
+						save = save->right;
+
+						temp->right = save;
+
+					}
+					save->top = temp;
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
 				}
 				else
 				{
-					save = save->right;
-
-					temp->right = save;
-
+					temp = temp->right;
+					temp->top = NULL;
+					start_root = temp;
 				}
-				save->top = temp;
-				temp = back_to_root(temp, start_root);
-				start_root = temp;
 
 			}
 			//left da right net
 			else if (temp->left != NULL && temp->right == NULL)
 			{
-				TreeNode* save = temp;
-				temp = temp->top;
-
-				if (save == temp->left)
+				if (temp != start_root)
 				{
-					save = save->left;
-					temp->left = save;
+					TreeNode* save = temp;
+					temp = temp->top;
+
+					if (save == temp->left)
+					{
+						save = save->left;
+						temp->left = save;
+					}
+					else
+					{
+						save = save->left;
+
+						temp->right = save;
+
+					}
+					save->top = temp;
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
 				}
 				else
 				{
-					save = save->left;
-
-					temp->right = save;
-
+					temp = temp->left;
+					temp->top = NULL;
+					start_root = temp;
 				}
-				save->top = temp;
-				temp = back_to_root(temp, start_root);
-				start_root = temp;
 			}
 
 			//tout est la
@@ -768,24 +790,30 @@ public:
 			//leaf
 			else if (temp->left == NULL && temp->right == NULL)
 			{
-				auto save = temp->top;
-				if (save->left == temp)
+				if (temp != start_root)
 				{
-					save->left = NULL;
-					temp->top = NULL;
+					auto save = temp->top;
+					if (save->left == temp)
+					{
+						save->left = NULL;
+						temp->top = NULL;
 
+					}
+					else
+					{
+						save->right = NULL;
+						temp->top = NULL;
+
+					}
+					save = back_to_root(save, start_root);
+					start_root = save;
+					
 				}
 				else
 				{
-					save->right = NULL;
-					temp->top = NULL;
-
+					start_root = NULL;
+					flag_not_null = false;
 				}
-				save = back_to_root(save, start_root);
-				start_root = save;
-				if (start_root == NULL)
-					flag_not_null = true;
-
 			}
 
 			stack.clear();
@@ -799,6 +827,21 @@ public:
 		return false;
 	}
 
+	int tree_height() {
+		return get_start_root(start_root);
+	}
+
+	int get_start_root(TreeNode* root) {
+		if (root == NULL)
+			return 0;
+		else {
+			auto left_height = get_start_root(root->left);
+			auto right_height = get_start_root(root->right);
+
+			return max(left_height, right_height) + 1;
+		}
+	}
+
 	it insert(Data val)
 	{
 		TreeNode* temp = start_root;
@@ -810,7 +853,7 @@ public:
 
 				if (temp->value >= val)
 				{
-					if (temp->left != nullptr)
+					if (temp->left != NULL)
 					{
 						temp = temp->left;
 					}
@@ -832,7 +875,7 @@ public:
 
 				if (temp->value < val)
 				{
-					if (temp->right != nullptr)
+					if (temp->right != NULL)
 					{
 						temp = temp->right;
 					}
@@ -854,7 +897,8 @@ public:
 		}
 		else
 		{
-			start_root->value = val;
+			start_root = new TreeNode(val);
+			
 			flag_not_null = true;
 			stack.clear();
 			stack.shrink_to_fit();
@@ -955,5 +999,10 @@ public:
 	int size_of_tree()
 	{
 		return stack.size();
+	}
+
+	vector<TreeNode*> get_stack()
+	{
+		return this->stack;
 	}
 };

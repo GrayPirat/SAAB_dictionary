@@ -505,8 +505,8 @@ COORD position, newPosition;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 int x = 0, y = 0;
 
-template<class KeyData,class Data>
-class binary_tree:public  Table<KeyData, Data>
+template<class KeyData, class Data>
+class binary_tree :public  Table<KeyData, Data>
 {
 	struct TreeNode
 	{
@@ -517,19 +517,41 @@ class binary_tree:public  Table<KeyData, Data>
 		TreeNode* right;
 		TreeNode* top;
 
+		bool visited = false;
+		TreeNode() :value(NULL), left(NULL), right(NULL), top(NULL), visited(false) {}
 
-		TreeNode() :value(NULL), left(NULL), right(NULL), top(NULL) {}
-		
-		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL) {}
-
+		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL), visited(false) {}
 	};
 
-	bool flag_not_null = false;
+	bool  flag_not_null = false;
 
 	typedef TreeNode* it;
 
 	TreeNode* start_root;
+	//iterator prop
+	it iter_pos;
 
+	vector<TreeNode*> stack;
+
+
+
+	bool flag_not_started = true;
+
+	bool check()
+	{
+		for (auto v : stack)
+		{
+			if (v->visited == false)
+				return true;
+		}
+		return false;
+	}
+
+	int is_kernel()
+	{
+
+	}
+	//end of prop
 	it back_to_root(it temp, it ans)
 	{
 		while (temp != ans)
@@ -541,7 +563,7 @@ class binary_tree:public  Table<KeyData, Data>
 	{
 
 		SetConsoleCursorPosition(hConsole, position);
-		
+
 		cout << root->value;
 		auto pos = position;
 		if (root->left != NULL)
@@ -554,7 +576,7 @@ class binary_tree:public  Table<KeyData, Data>
 			pos.X = pos.X - 1;
 			pos.Y = pos.Y + 1;
 			print_inner(root->left, pos);
-			
+
 		}
 		if (root->right != NULL)
 		{
@@ -568,11 +590,23 @@ class binary_tree:public  Table<KeyData, Data>
 		}
 
 	}
+
+	void remaster_stack(TreeNode* root)
+	{
+		stack.push_back(root);
+
+		if (root->left != NULL)
+		{
+			remaster_stack(root->left);
+		}
+		if (root->right != NULL)
+			remaster_stack(root->right);
+	}
 public:
 	binary_tree()
 	{
-		start_root=new TreeNode;
-		
+		start_root = new TreeNode;
+
 	}
 	binary_tree(Data val)
 	{
@@ -584,13 +618,21 @@ public:
 	}
 
 
-	bool remove(Data val) 
+	bool remove(Data val)
 	{
 		TreeNode* temp = search_tree(val);
-		
+
 
 		if (temp->value != NULL)
 		{
+			for (int i = 0; i < stack.size(); i++)
+			{
+				if (stack[i] == temp)
+				{
+					stack.erase(stack.begin() + i);
+				}
+			}
+
 			//left net right da
 			if (temp->left == NULL && temp->right != NULL)
 			{
@@ -605,9 +647,9 @@ public:
 				else
 				{
 					save = save->right;
-					
+
 					temp->right = save;
-					
+
 				}
 				save->top = temp;
 				temp = back_to_root(temp, start_root);
@@ -657,17 +699,21 @@ public:
 
 				//create brand new node to build evrth
 				TreeNode* blank = new TreeNode(min_r_branch->value);
+				blank->visited = min_r_branch->visited;
 
 				//join right branch
-				if (min_r_branch !=s_right)
+				if (min_r_branch != s_right)
 				{
-					blank->right = min_r_branch->right;
-					min_r_branch->right->top = blank;
+					if (min_r_branch->right != NULL)
+					{
+						blank->right = min_r_branch->right;
+						min_r_branch->right->top = blank;
+					}
 
 					temp = blank;
 					s_right->left = NULL;
 
-					
+
 					while (temp->right != NULL)
 						temp = temp->right;
 
@@ -680,39 +726,46 @@ public:
 				{
 					if (s_right->right != NULL)
 					{
-						blank->right = s_right->right; 
+						blank->right = s_right->right;
 						s_right->right->top = blank;
 					}
-						
+
 				}
-				
-				
+
+
 				//join left branch
 				blank->left = s_left;
 				s_left->top = blank;
-				
+
 
 				//join main tree
-				auto s_top = save->top;
-				if (s_top->left == save)
+				if (save != start_root)
 				{
-					s_top->left = blank;
-					blank->top = s_top;
+					auto s_top = save->top;
+					if (s_top->left == save)
+					{
+						s_top->left = blank;
+						blank->top = s_top;
+					}
+					else
+					{
+						s_top->right = blank;
+						blank->top = s_top;
+
+					}
+					s_top = back_to_root(s_top, start_root);
+					start_root = s_top;
 				}
 				else
 				{
-					s_top->right = blank;
-					blank->top = s_top;
-
+					start_root = blank;
 				}
-				s_top = back_to_root(s_top, start_root);
-				start_root = s_top;
 				//if it dont work properly than try 2 var
 
-				
+
 			}
 
-			 //leaf
+			//leaf
 			else if (temp->left == NULL && temp->right == NULL)
 			{
 				auto save = temp->top;
@@ -720,7 +773,7 @@ public:
 				{
 					save->left = NULL;
 					temp->top = NULL;
-					
+
 				}
 				else
 				{
@@ -730,8 +783,15 @@ public:
 				}
 				save = back_to_root(save, start_root);
 				start_root = save;
-				
+				if (start_root == NULL)
+					flag_not_null = true;
+
 			}
+
+			stack.clear();
+			stack.shrink_to_fit();
+			remaster_stack(start_root);
+
 			return true;
 
 		}
@@ -739,7 +799,7 @@ public:
 		return false;
 	}
 
-	it insert(Data val) 
+	it insert(Data val)
 	{
 		TreeNode* temp = start_root;
 		bool flag_for_tree = true;
@@ -760,8 +820,11 @@ public:
 
 						ans->top = temp;
 						temp->left = ans;
-						temp = back_to_root(temp,start_root);
+						temp = back_to_root(temp, start_root);
 						start_root = temp;
+						stack.clear();
+						stack.shrink_to_fit();
+						remaster_stack(start_root);
 						return ans;
 					}
 
@@ -780,6 +843,9 @@ public:
 						temp->right = ans;
 						temp = back_to_root(temp, start_root);
 						start_root = temp;
+						stack.clear();
+						stack.shrink_to_fit();
+						remaster_stack(start_root);
 						return ans;
 					}
 				}
@@ -787,11 +853,19 @@ public:
 
 		}
 		else
-			start_root->value = val; flag_not_null = true; return temp;
-			
+		{
+			start_root->value = val;
+			flag_not_null = true;
+			stack.clear();
+			stack.shrink_to_fit();
+			remaster_stack(start_root);
+			return temp;
+
+		}
+
 	}
 
-	it search_tree(Data val) 
+	it search_tree(Data val)
 	{
 		TreeNode* temp = start_root;
 		if (temp != NULL)
@@ -813,7 +887,7 @@ public:
 						ans->top = temp;
 						return ans;
 					}
-						
+
 				}
 
 				if (temp->value < val)
@@ -832,6 +906,39 @@ public:
 		}
 	}
 
+	it operator++()
+	{
+
+		if (stack.size() == 0)
+			return new TreeNode();
+
+		if (check())
+		{
+			int min = INT_MAX;
+			int pos = 0;
+			for (int i = 0; i < stack.size(); i++)
+			{
+				if (stack[i]->visited == false && stack[i]->value < min)
+				{
+					min = stack[i]->value;
+					pos = i;
+
+				}
+			}
+			stack[pos]->visited = true;
+			iter_pos = stack[pos];
+
+			return iter_pos;
+		}
+		else
+		{
+			for (auto i : stack)
+				i->visited = false;
+			auto t = this->operator++();
+			return t;
+		}
+
+	}
 	void print()
 	{
 		system("cls");
@@ -839,5 +946,14 @@ public:
 		position.Y = 0;
 
 		print_inner(start_root, position);
+
+		position.X = 0;
+		position.Y = 30;
+		SetConsoleCursorPosition(hConsole, position);
+	}
+
+	int size_of_tree()
+	{
+		return stack.size();
 	}
 };

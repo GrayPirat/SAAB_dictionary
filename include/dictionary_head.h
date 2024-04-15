@@ -546,11 +546,6 @@ class binary_tree :public  Table<KeyData, Data>
 		}
 		return false;
 	}
-
-	int is_kernel()
-	{
-
-	}
 	//end of prop
 	it back_to_root(it temp, it ans)
 	{
@@ -561,51 +556,58 @@ class binary_tree :public  Table<KeyData, Data>
 
 	void print_inner(TreeNode* root, COORD position)
 	{
-
-		SetConsoleCursorPosition(hConsole, position);
-
-		cout << root->value;
-		auto pos = position;
-		if (root->left != NULL)
+		if (root != NULL)
 		{
+			SetConsoleCursorPosition(hConsole, position);
 
-			pos.X = position.X - 1;
-			pos.Y = position.Y + 1;
-			SetConsoleCursorPosition(hConsole, pos);
-			cout << '/';
-			pos.X = pos.X - 1;
-			pos.Y = pos.Y + 1;
-			print_inner(root->left, pos);
+			cout << root->value;
+			auto pos = position;
+			if (root->left != NULL)
+			{
 
+				/*pos.X = position.X - rashod/2;
+				pos.Y = position.Y + 1;
+				SetConsoleCursorPosition(hConsole, pos);
+				cout << '/';*/
+				pos.X = pos.X - 4;
+				pos.Y = pos.Y + 1;
+				print_inner(root->left, pos);
+				
+
+			}
+			pos = position;
+			if (root->right != NULL)
+			{
+				/*pos.X = position.X + rashod/2;
+				pos.Y = position.Y + 1;
+				SetConsoleCursorPosition(hConsole, pos);
+				cout << '\\';*/
+				pos.X = pos.X + 4;
+				pos.Y = pos.Y + 1;
+				print_inner(root->right, pos);
+			}
 		}
-		if (root->right != NULL)
-		{
-			pos.X = position.X + 1;
-			pos.Y = position.Y + 1;
-			SetConsoleCursorPosition(hConsole, pos);
-			cout << '\\';
-			pos.X = pos.X + 1;
-			pos.Y = pos.Y + 1;
-			print_inner(root->right, pos);
-		}
-
 	}
 
 	void remaster_stack(TreeNode* root)
 	{
-		stack.push_back(root);
-
-		if (root->left != NULL)
+		if (root != NULL)
 		{
-			remaster_stack(root->left);
+			stack.push_back(root);
+
+			if (root->left != NULL)
+			{
+				remaster_stack(root->left);
+			}
+			if (root->right != NULL)
+				remaster_stack(root->right);
 		}
-		if (root->right != NULL)
-			remaster_stack(root->right);
+		
 	}
 public:
 	binary_tree()
 	{
-		start_root = new TreeNode;
+		start_root = new TreeNode();
 
 	}
 	binary_tree(Data val)
@@ -623,60 +625,76 @@ public:
 		TreeNode* temp = search_tree(val);
 
 
-		if (temp->value != NULL)
+		if (!(temp==NULL) )
 		{
 			for (int i = 0; i < stack.size(); i++)
 			{
 				if (stack[i] == temp)
 				{
 					stack.erase(stack.begin() + i);
+					break;
 				}
 			}
 
 			//left net right da
 			if (temp->left == NULL && temp->right != NULL)
 			{
-				TreeNode* save = temp;
-				temp = temp->top;
-
-				if (save == temp->left)
+				if (temp != start_root)
 				{
-					save = save->right;
-					temp->left = save;
+
+
+					TreeNode* save = temp;
+					temp = temp->top;
+
+					if (save == temp->left)
+					{
+						save = save->right;
+						temp->left = save;
+					}
+					else
+					{
+						save = save->right;
+
+						temp->right = save;
+
+					}
+					save->top = temp;
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
 				}
 				else
 				{
-					save = save->right;
-
-					temp->right = save;
-
+					start_root = temp->right;
 				}
-				save->top = temp;
-				temp = back_to_root(temp, start_root);
-				start_root = temp;
-
 			}
 			//left da right net
 			else if (temp->left != NULL && temp->right == NULL)
 			{
-				TreeNode* save = temp;
-				temp = temp->top;
-
-				if (save == temp->left)
+				if (start_root != temp)
 				{
-					save = save->left;
-					temp->left = save;
+					TreeNode* save = temp;
+					temp = temp->top;
+
+					if (save == temp->left)
+					{
+						save = save->left;
+						temp->left = save;
+					}
+					else
+					{
+						save = save->left;
+
+						temp->right = save;
+
+					}
+					save->top = temp;
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
 				}
 				else
 				{
-					save = save->left;
-
-					temp->right = save;
-
+					start_root = temp->left;
 				}
-				save->top = temp;
-				temp = back_to_root(temp, start_root);
-				start_root = temp;
 			}
 
 			//tout est la
@@ -710,10 +728,17 @@ public:
 						min_r_branch->right->top = blank;
 					}
 
+					
+
+					auto skipper = s_right;
+					while (skipper->left != min_r_branch)
+						skipper = skipper->left;
+					skipper->left = NULL;
+					skipper = back_to_root(skipper, s_right);
+					s_right = skipper;
+					
+
 					temp = blank;
-					s_right->left = NULL;
-
-
 					while (temp->right != NULL)
 						temp = temp->right;
 
@@ -768,23 +793,30 @@ public:
 			//leaf
 			else if (temp->left == NULL && temp->right == NULL)
 			{
-				auto save = temp->top;
-				if (save->left == temp)
+				if (temp != start_root)
 				{
-					save->left = NULL;
-					temp->top = NULL;
+					auto save = temp->top;
+					if (save->left == temp)
+					{
+						save->left = NULL;
+						temp->top = NULL;
 
+					}
+					else
+					{
+						save->right = NULL;
+						temp->top = NULL;
+
+					}
+					save = back_to_root(save, start_root);
+					start_root = save;
 				}
 				else
 				{
-					save->right = NULL;
-					temp->top = NULL;
-
+					start_root = NULL;
+					flag_not_null++;
 				}
-				save = back_to_root(save, start_root);
-				start_root = save;
-				if (start_root == NULL)
-					flag_not_null = true;
+				
 
 			}
 
@@ -883,9 +915,8 @@ public:
 					}
 					else
 					{
-						TreeNode* ans = new TreeNode;
-						ans->top = temp;
-						return ans;
+						
+						return NULL;
 					}
 
 				}
@@ -898,8 +929,8 @@ public:
 					}
 					else
 					{
-						TreeNode* ans = new TreeNode;
-						return ans;
+						
+						return NULL;
 					}
 				}
 			}

@@ -1,36 +1,43 @@
 #include "dictionary_head.h"
+#include < algorithm >
+#include <random> 
 using namespace std;
 
 int main(){
 	{
         binary_tree<int, int> temp;
-        temp.insert(3);
-        temp.insert(4);
-        temp.insert(2);
-        temp.insert(6);
-        temp.insert(5);
-        temp.insert(9);
-        temp.insert(7);
-        temp.insert(8);
-
-
-        temp.insert(10);
-
-
-        temp.print();
-        temp.remove(6);
-        temp.print();
-
-        for (int i = 0; i < temp.size_of_tree(); i++)
+        
+        vector<int> v;
+        for (int i = 0; i < 100; i++)
         {
-            temp.operator++()->value = 1;
-            temp.print();
+            v.push_back(i);
         }
-        temp.insert(100);
-        temp.operator++()->value = 99;
-        temp.print();
-        temp.operator++()->value = 99;
-        temp.print();
+        random_device rd;
+        mt19937 g(rd());
+
+        shuffle(v.begin(), v.end(), g);
+        
+        for (int i = 0; i < 100; i++)
+        {
+            temp.insert(v[i]);
+        }
+        /*temp.print();*/
+        
+        for (int i = 0; i < 100; i++)
+        {
+            if (temp.remove(v[i]) == false)
+            {
+                system("cls");
+                for (int i = 0; i < 100; i++)
+                    cout << v[i] << ' ';
+                return -1;
+            }
+                
+
+            /*temp.print();*/
+        }
+        
+        
 
 		
 	}

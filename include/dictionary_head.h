@@ -1,9 +1,12 @@
 #pragma once
 #include<iostream>
 #include<vector>
-#include <string>
-#include <iosfwd>
-#include <windows.h>
+#include<random>
+#include<algorithm>
+#include<limits>
+#include<string>
+#include<iosfwd>
+#include<windows.h>
 #include<cstdio>
 using namespace std;
 
@@ -295,7 +298,7 @@ public:
 
 	Hash_Table(int n)
 	{
-		n = std::max(1, n);
+		n = max(1, n);
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
 		if (is_same_v<KeyData, vector<int>>)
@@ -501,12 +504,8 @@ public:
 
 
 
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
-
 template<class KeyData, class Data>
-class binary_tree :public  Table<KeyData, Data>
+class Binary_Tree :public  Table<KeyData, Data>
 {
 	struct TreeNode
 	{
@@ -533,7 +532,7 @@ class binary_tree :public  Table<KeyData, Data>
 
 	vector<TreeNode*> stack;
 
-
+	int size;
 
 	bool flag_not_started = true;
 
@@ -605,19 +604,23 @@ class binary_tree :public  Table<KeyData, Data>
 		
 	}
 public:
-	binary_tree()
+	Binary_Tree()
 	{
 		start_root = new TreeNode();
-
 	}
-	binary_tree(Data val)
+	Binary_Tree(Data val)
 	{
 		start_root->TreeNode(val);
 	}
-	binary_tree(binary_tree* tree)
+	Binary_Tree(const Binary_Tree& tree)
 	{
-		this->start_root = tree->start_root;
+		for (int i = 0; i < tree.get_size(); i++) {
+			stack.push_back(tree.stack[i]);
+			if (i == 0) 
+				start_root = stack[i];
+		}
 	}
+
 
 
 	bool remove(Data val)
@@ -831,6 +834,10 @@ public:
 		return false;
 	}
 
+	int get_size() {
+		return stack.size();
+	}
+
 	it insert(Data val)
 	{
 		TreeNode* temp = start_root;
@@ -970,6 +977,7 @@ public:
 		}
 
 	}
+
 	void print()
 	{
 		system("cls");
@@ -981,6 +989,21 @@ public:
 		position.X = 0;
 		position.Y = 30;
 		SetConsoleCursorPosition(hConsole, position);
+	}
+
+	int tree_height() {
+		return height_start_root(start_root);
+	}
+
+	int height_start_root(TreeNode* root) {
+		if (root == NULL)
+			return 0;
+		else {
+			auto left_height = height_start_root(root->left);
+			auto right_height = height_start_root(root->right);
+
+			return max(left_height, right_height) + 1;
+		}
 	}
 
 	int size_of_tree()

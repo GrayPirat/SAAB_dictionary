@@ -522,6 +522,7 @@ class Binary_Tree :public  Table<KeyData, Data>
 		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL), visited(false) {}
 	};
 
+	
 	bool  flag_not_null = false;
 
 	typedef TreeNode* it;
@@ -614,13 +615,29 @@ public:
 	}
 	Binary_Tree(const Binary_Tree& tree)
 	{
-		for (int i = 0; i < tree.get_size(); i++) {
-			stack.push_back(tree.stack[i]);
-			if (i == 0) 
-				start_root = stack[i];
+		if (tree.start_root != NULL)
+		{
+			this->start_root = new TreeNode();
+
+			cop_tree(this, tree.start_root);
 		}
+		
+		/*if (temp != NULL)
+		{
+			cop_tree(this, temp);
+		}*/
+		
+		
 	}
 
+	void cop_tree(Binary_Tree* tree,TreeNode* root) {
+		tree->insert(root->value);
+
+		if (root->left != NULL)
+			cop_tree(tree, root->left);
+		if (root->right != NULL)
+			cop_tree(tree, root->right);
+	}
 
 
 	bool remove(Data val)
@@ -841,7 +858,7 @@ public:
 	it insert(Data val)
 	{
 		TreeNode* temp = start_root;
-		bool flag_for_tree = true;
+		
 		if (flag_not_null)
 		{
 			while (1)

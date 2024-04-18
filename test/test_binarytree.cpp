@@ -107,19 +107,14 @@ TEST(Binary_Tree, bintree_copy_constr) {
 	vector<int> vec = { 1,2,6,-3,3 };
 	for (int i = 0; i < vec.size(); i++) {
 		a.insert(vec[i]);
-		a.print();
+
 	}
 	Binary_Tree<int, int>b(a);
 	for (int i = 0; i < a.get_size(); i++) {
 		b.operator++()->value += 10;
 	}
-	int x = 0;
-	for (int i = 0; i < a.get_size(); i++) {
-		auto temp1 = a.operator++()->value;
-		auto temp2 = b.operator++()->value;
-		x = temp1 - temp2;
-		cout;
-	}
+	
+	
 	for (int i = 0; i < a.get_size(); i++) {
 		EXPECT_EQ((b.search_tree(vec[i] + 10)->value) - (a.search_tree(vec[i])->value), 10);
 	}

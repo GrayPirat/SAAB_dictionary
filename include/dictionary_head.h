@@ -511,15 +511,16 @@ class Binary_Tree :public  Table<KeyData, Data>
 	{
 	public:
 		Data value;
+		KeyData key;
 
 		TreeNode* left;
 		TreeNode* right;
 		TreeNode* top;
 
 		bool visited = false;
-		TreeNode() :value(NULL), left(NULL), right(NULL), top(NULL), visited(false) {}
+		TreeNode() :value(NULL),key(NULL) left(NULL), right(NULL), top(NULL), visited(false) {}
 
-		TreeNode(Data value) : value(value), left(NULL), right(NULL), top(NULL), visited(false) {}
+		TreeNode(Data value,KeyData key) : value(value),key(key) left(NULL), right(NULL), top(NULL), visited(false) {}
 	};
 
 	
@@ -560,7 +561,7 @@ class Binary_Tree :public  Table<KeyData, Data>
 		{
 			SetConsoleCursorPosition(hConsole, position);
 
-			cout << root->value;
+			cout << root->key;
 			auto pos = position;
 			if (root->left != NULL)
 			{
@@ -609,9 +610,9 @@ public:
 	{
 		start_root = new TreeNode();
 	}
-	Binary_Tree(Data val)
+	Binary_Tree(Data val,KeyData key)
 	{
-		start_root->TreeNode(val);
+		start_root->TreeNode(val,key);
 	}
 	Binary_Tree(const Binary_Tree& tree)
 	{
@@ -631,7 +632,7 @@ public:
 	}
 
 	void cop_tree(Binary_Tree* tree,TreeNode* root) {
-		tree->insert(root->value);
+		tree->insert(root->key,root->value);
 
 		if (root->left != NULL)
 			cop_tree(tree, root->left);
@@ -640,9 +641,9 @@ public:
 	}
 
 
-	bool remove(Data val)
+	bool remove(KeyData key)
 	{
-		TreeNode* temp = search_tree(val);
+		TreeNode* temp = search_tree(key);
 
 
 		if (!(temp==NULL) )
@@ -855,7 +856,7 @@ public:
 		return stack.size();
 	}
 
-	it insert(Data val)
+	it insert(KeyData key,Data val)
 	{
 		TreeNode* temp = start_root;
 		
@@ -864,7 +865,7 @@ public:
 			while (1)
 			{
 
-				if (temp->value >= val)
+				if (temp->key >= val)
 				{
 					if (temp->left != nullptr)
 					{
@@ -872,7 +873,7 @@ public:
 					}
 					else
 					{
-						TreeNode* ans = new TreeNode(val);
+						TreeNode* ans = new TreeNode(key,val);
 
 						ans->top = temp;
 						temp->left = ans;
@@ -886,7 +887,7 @@ public:
 
 				}
 
-				if (temp->value < val)
+				if (temp->key < val)
 				{
 					if (temp->right != nullptr)
 					{
@@ -894,7 +895,7 @@ public:
 					}
 					else
 					{
-						TreeNode* ans = new TreeNode(val);
+						TreeNode* ans = new TreeNode(key,val);
 						ans->top = temp;
 						temp->right = ans;
 						temp = back_to_root(temp, start_root);
@@ -911,6 +912,7 @@ public:
 		else
 		{
 			start_root->value = val;
+			start_root->key = key;
 			flag_not_null = true;
 			stack.clear();
 			stack.shrink_to_fit();
@@ -921,17 +923,17 @@ public:
 
 	}
 
-	it search_tree(Data val)
+	it search_tree(key key)
 	{
 		TreeNode* temp = start_root;
 		if (temp != NULL)
 		{
 			while (1)
 			{
-				if (temp->value == val)
+				if (temp->key == key)
 					return temp;
 
-				if (temp->value > val)
+				if (temp->key > key)
 				{
 					if (temp->left != NULL)
 					{
@@ -945,7 +947,7 @@ public:
 
 				}
 
-				if (temp->value < val)
+				if (temp->key < key)
 				{
 					if (temp->right != NULL)
 					{
@@ -973,9 +975,9 @@ public:
 			int pos = 0;
 			for (int i = 0; i < stack.size(); i++)
 			{
-				if (stack[i]->visited == false && stack[i]->value < min)
+				if (stack[i]->visited == false && stack[i]->key < min)
 				{
-					min = stack[i]->value;
+					min = stack[i]->key;
 					pos = i;
 
 				}

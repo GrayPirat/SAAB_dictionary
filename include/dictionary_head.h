@@ -505,11 +505,11 @@ public:
 
 
 template<class KeyData, class Data>
-class Binary_Tree :public  Table<KeyData, Data>
+class Binary_Tree
 {
+protected:
 	struct TreeNode
 	{
-	public:
 		Data value;
 		KeyData key;
 
@@ -517,10 +517,12 @@ class Binary_Tree :public  Table<KeyData, Data>
 		TreeNode* right;
 		TreeNode* top;
 
-		bool visited = false;
-		TreeNode() :value(NULL),key(NULL) left(NULL), right(NULL), top(NULL), visited(false) {}
 
-		TreeNode(Data value,KeyData key) : value(value),key(key) left(NULL), right(NULL), top(NULL), visited(false) {}
+		int Height;
+		bool visited = false;
+		TreeNode() :value(NULL),key(NULL), left(NULL), right(NULL), top(NULL), visited(false) {}
+
+		TreeNode(KeyData key,Data value) : value(value),key(key), left(NULL), right(NULL), top(NULL), visited(false),Height(0) {}
 	};
 
 	
@@ -612,7 +614,7 @@ public:
 	}
 	Binary_Tree(Data val,KeyData key)
 	{
-		start_root->TreeNode(val,key);
+		start_root =new TreeNode(val,key);
 	}
 	Binary_Tree(const Binary_Tree& tree)
 	{
@@ -622,13 +624,6 @@ public:
 
 			cop_tree(this, tree.start_root);
 		}
-		
-		/*if (temp != NULL)
-		{
-			cop_tree(this, temp);
-		}*/
-		
-		
 	}
 
 	void cop_tree(Binary_Tree* tree,TreeNode* root) {
@@ -643,7 +638,7 @@ public:
 
 	bool remove(KeyData key)
 	{
-		TreeNode* temp = search_tree(key);
+		TreeNode* temp = search(key);
 
 
 		if (!(temp==NULL) )
@@ -737,7 +732,7 @@ public:
 				auto min_r_branch = temp;
 
 				//create brand new node to build evrth
-				TreeNode* blank = new TreeNode(min_r_branch->value);
+				TreeNode* blank = new TreeNode(min_r_branch->key,min_r_branch->value);
 				blank->visited = min_r_branch->visited;
 
 				//join right branch
@@ -865,7 +860,7 @@ public:
 			while (1)
 			{
 
-				if (temp->key >= val)
+				if (temp->key >= key)
 				{
 					if (temp->left != nullptr)
 					{
@@ -887,7 +882,7 @@ public:
 
 				}
 
-				if (temp->key < val)
+				if (temp->key < key)
 				{
 					if (temp->right != nullptr)
 					{
@@ -923,7 +918,7 @@ public:
 
 	}
 
-	it search_tree(key key)
+	it search(KeyData key)
 	{
 		TreeNode* temp = start_root;
 		if (temp != NULL)
@@ -1029,4 +1024,149 @@ public:
 	{
 		return stack.size();
 	}
+};
+
+
+template<class KeyData,class Data>
+class AVL_Tree : public Binary_Tree<KeyData,Data>
+{
+	int set_height(TreeNode* root)
+	{
+		int t1 = 0;
+		int t2 = 0;
+		if (root->left != NULL)
+			t1=set_height(root->left);
+		if (root->right != NULL)
+			t2 = set_height(root->right);
+		if (root->left == NULL && root->right == NULL)
+		{
+			root->Height = 0;
+			return 0;
+		}
+		else
+		{
+			root->Height = max(t1, t2) + 1;
+			return root->Height;
+		}
+		
+	}
+	int bfactor(TreeNode* p)
+	{
+		auto h_l = 0;
+		auto h_r = 0;
+		if (p->left != NULL)
+			h_l = p->left->Height;
+		if (p->right != NULL)
+			h_r = p->right->Height;
+		return h_r - h_l;
+	}
+
+	it SmallRotateRight(TreeNode* p) // правый поворот вокруг p
+	{
+		auto q = p->left;
+		p->left = q->right;
+		q->right = p;
+		q->top = p->top;
+		p->top = q;
+		
+		return q;
+	}
+	it SmallRotateLeft(TreeNode* q) // левый поворот вокруг q
+	{
+		auto p = q->right;
+		q->right = p->left;
+		p->left = q;
+		p->top = q->top;
+		q->top = p;
+
+		
+		return p;
+	}
+	void balance(TreeNode* p) // балансировка узла p
+	{
+		
+		if (bfactor(p) == 2)
+		{
+			
+			if (bfactor(p->right) < 0)
+				p->right = SmallRotateRight(p->right);
+			auto temp = SmallRotateLeft(p);
+			start_root = temp;
+		}
+		if (bfactor(p) == -2)
+		{
+			if (bfactor(p->left) > 0)
+				p->left = SmallRotateLeft(p->left);
+			auto temp = SmallRotateRight(p);
+			start_root = temp;
+		}
+	}
+
+	void print_inner(TreeNode* root, COORD position)
+	{
+		if (root != NULL)
+		{
+			SetConsoleCursorPosition(hConsole, position);
+
+			cout << root->key;
+			auto pos = position;
+			if (root->left != NULL)
+			{
+				int temp =  (root->Height*2);
+				
+				pos.X = pos.X - temp;
+				pos.Y = pos.Y + 1;
+				print_inner(root->left, pos);
+
+
+			}
+			pos = position;
+			if (root->right != NULL)
+			{
+				int temp = (root ->Height*2);
+				pos.X = pos.X +temp;
+				pos.Y = pos.Y + 1;
+				print_inner(root->right, pos);
+			}
+		}
+	}
+public:
+	AVL_Tree()
+	{
+		
+		start_root = new  TreeNode();
+	}
+	AVL_Tree(KeyData key,Data val)
+	{
+		start_root = new TreeNode(key, val);
+		flag_not_null = true;
+	}
+	
+	
+	it insert(KeyData key, Data val) 
+	{
+		auto ans = Binary_Tree::insert(key, val);
+		set_height(start_root);
+		print();
+		balance(start_root);
+		print();
+		return ans;
+	}
+	bool remove(KeyData key)
+	{
+		auto ans = Binary_Tree::remove(key);
+		set_height(start_root);
+		balance(start_root);
+		return ans;
+	}
+	
+	void print()
+		{
+		system("cls");
+		position.X = 50;
+		position.Y = 0;
+
+		print_inner(start_root, position);
+	}
+	
 };

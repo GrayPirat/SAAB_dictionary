@@ -9,37 +9,18 @@ int x = 0, y = 0;
 
 int main()
 {
-    Binary_Tree<int, int> a;
-    a.insert(1);
-    a.insert(2);
-    a.insert(6);
-    a.insert(-1);
-    a.insert(3);
-    a.print();
-    a.remove(3);
-    a.print();
-    a.remove(6);
-    a.print();
-    a.remove(-1);
-    a.print();
-    /* Binary_Tree<int, int> temp;
-    temp.insert(3);
-    temp.insert(4);
-    temp.insert(2);
-    temp.insert(6);
-    temp.insert(5);
-    temp.insert(9);
-    temp.insert(7);
-    temp.insert(8);
+    AVL_Tree<int, int> temp(2,3);
+    temp.insert(5, 4);
+    temp.insert(7, 4);
+    temp.insert(6, 4);
+    temp.insert(3, 4);
+    temp.insert(1, 4);
+    temp.insert(0, 4);
+    temp.insert(6, 4);
+    temp.insert(5, 4);
+    temp.insert(7, 4);
+    temp.insert(8, 4);
+    temp.insert(9, 4);
 
-
-    temp.insert(10);
-
-
-    temp.print();
-    temp.remove(6);
-    temp.print();
-    */
-
-
+    
 }

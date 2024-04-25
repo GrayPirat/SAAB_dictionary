@@ -1170,3 +1170,94 @@ public:
 	}
 	
 };
+
+template<class KeyData, class Data>
+class RB_Tree : public Binary_Tree<KeyData, Data> {
+private:
+	enum colors {red, black};
+
+	struct RBNode {
+		RBNode* parent, * left, * right;
+		enum colors color;
+		KeyData key;
+		Data value;
+	};
+
+	RBNode *grandparent(RBNode* node)
+	{
+		if ((node != NULL) && (node->parent != NULL))
+			return node->parent->parent;
+		else
+			return NULL;
+	}
+
+	RBNode* Uncle(RBNode* node) {
+		Node* g = grandparent(node);
+		if (g == NULL)
+			return NULL;
+		if (node->parent == g->left)
+			return g->right;
+		else
+			return g->left;
+	}
+
+
+public:
+	void rotate_left(RBNode* node)//left RB turn
+	{
+		RBNode* temp = node->right;
+
+		temp->parent = node->parent;
+		if (node->parent != NULL) {
+			if (node->parent->left == node)
+				node->parent->left = temp;
+			else
+				node->parent->right = temp;
+		}
+
+		node->right = temp->left;
+		if (temp->left != NULL)
+			temp->left->parent = n;
+
+		node->parent = temp;
+		temp->left = node;
+	}
+
+	void rotate_right(RBNode* node)
+	{
+		RBNode* temp = node->left;
+
+		temp->parent = node->parent; /* при этом, возможно, temp становится корнем дерева */
+		if (node->parent != NULL) {
+			if (node->parent->left == node)
+				node->parent->left = temp;
+			else
+				node->parent->right = temp;
+		}
+
+		node->left = temp->right;
+		if (temp->right != NULL)
+			temp->right->parent = node;
+
+		node->parent = temp;
+		temp->right = node;
+	}
+
+	void replace(RBNode* node, RBNode* child) {
+		child->parent = node->parent;
+		if (node == node->parent->left) {
+			node->parent->left = child;
+		}
+		else {
+			node->parent->right = child;
+		}
+	}
+
+	void remove(KeyData key, Data val) {
+
+	}
+
+	void insert(KeyData key, Data val) {
+		
+	}
+};

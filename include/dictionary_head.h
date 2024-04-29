@@ -556,16 +556,20 @@ public:
 					if (save == temp->left) {
 						save = save->right;
 						temp->left = save;
+						//temp = temp->left;
 					}
 					else {
 						save = save->right;
 						temp->right = save;
+						//temp = temp->right;
 					}
+
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
 				}
-				else start_root = temp->right;
+				else
+					start_root = temp->right;
 			}
 			//left da right net
 			else if (temp->left != NULL && temp->right == NULL) {
@@ -576,10 +580,12 @@ public:
 					if (save == temp->left) {
 						save = save->left;
 						temp->left = save;
+						//temp = temp->left;
 					}
 					else {
 						save = save->left;
 						temp->right = save;
+						//temp=temp->right;
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
@@ -850,7 +856,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		return h_r - h_l;
 	}
 
-	it SmallRotateRight(TreeNode* p) { // ïðàâûé ïîâîðîò âîêðóã p
+	it SmallRotateRight(TreeNode* p) { // Ã¯Ã°Ã Ã¢Ã»Ã© Ã¯Ã®Ã¢Ã®Ã°Ã®Ã² Ã¢Ã®ÃªÃ°Ã³Ã£ p
 		auto q = p->left;
 		p->left = q->right;
 		if (p->left != NULL)
@@ -858,12 +864,11 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		q->right = p;
 		q->top = p->top;
 		p->top = q;
-		
 
 		return q;
 	}
 
-	it SmallRotateLeft(TreeNode* q) { // ëåâûé ïîâîðîò âîêðóã q
+	it SmallRotateLeft(TreeNode* q) { // Ã«Ã¥Ã¢Ã»Ã© Ã¯Ã®Ã¢Ã®Ã°Ã®Ã² Ã¢Ã®ÃªÃ°Ã³Ã£ q
 		auto p = q->right;
 		q->right = p->left;
 		if (q->right != NULL)
@@ -871,11 +876,10 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		p->left = q;
 		p->top = q->top;
 		q->top = p;
-
 		return p;
 	}
 
-	void balance(TreeNode* p) // áàëàíñèðîâêà óçëà p
+	void balance(TreeNode* p) // Ã¡Ã Ã«Ã Ã­Ã±Ã¨Ã°Ã®Ã¢ÃªÃ  Ã³Ã§Ã«Ã  p
 	{
 		auto save = p;
 		if (bfactor(p) == 2)
@@ -941,8 +945,8 @@ public:
 		auto ans = Binary_Tree::insert(key, val);
 		set_height(start_root);
 
-		balance(start_root);
 
+		balance(start_root);
 		return ans;
 	}
 
@@ -1036,7 +1040,7 @@ public:
 
 	void rotate_right(RBNode* node) {
 		RBNode* temp = node->left;
-		temp->parent = node->parent; /* ïðè ýòîì, âîçìîæíî, temp ñòàíîâèòñÿ êîðíåì äåðåâà */
+		temp->parent = node->parent; /* Ã¯Ã°Ã¨ Ã½Ã²Ã®Ã¬, Ã¢Ã®Ã§Ã¬Ã®Ã¦Ã­Ã®, temp Ã±Ã²Ã Ã­Ã®Ã¢Ã¨Ã²Ã±Ã¿ ÃªÃ®Ã°Ã­Ã¥Ã¬ Ã¤Ã¥Ã°Ã¥Ã¢Ã  */
 		if (node->parent != NULL) {
 			if (node->parent->left == node)
 				node->parent->left = temp;

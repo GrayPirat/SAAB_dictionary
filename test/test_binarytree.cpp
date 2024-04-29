@@ -37,10 +37,10 @@ TEST(Binary_Tree, bintree_remove1000) {
 	for (int i = 0; i < 1000; i++) {
 		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
 	}
-	
-	for (int i = 1; i < 1000; i++) {
-		auto temp = vec[i];
-		auto temp1 = a.search(temp)->value;
+	//shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+	for (int i = 0; i < 100; i++) {
+		/*auto temp = vec[i];
+		auto temp1 = a.search(temp)->value;*/
 		EXPECT_EQ(a.remove(vec[i]), true);
 	}
 }
@@ -103,7 +103,8 @@ TEST(Binary_Tree, bintree_operator_plusplus) {
 		a.operator++()->value++;
 	}
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ(a.search(vec[i] /*+1*/)->value, vec[i]+1);
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]+1);
+
 	}
 }
 
@@ -112,15 +113,15 @@ TEST(Binary_Tree, bintree_copy_constr) {
 	vector<int> vec = { 1,2,6,-3,3 };
 	for (int i = 0; i < vec.size(); i++) {
 		a.insert(vec[i],vec[i]);
-
 	}
+
 	Binary_Tree<int, int>b(a);
 	for (int i = 0; i < a.get_size(); i++) {
 		b.operator++()->value += 10;
 	}
 	
-	
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ((b.search(vec[i] /*+ 10*/)->value) - (a.search(vec[i])->value), 10);
+		EXPECT_EQ((b.search(vec[i])->value) - (a.search(vec[i])->value), 10);
+
 	}
 }

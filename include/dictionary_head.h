@@ -13,21 +13,16 @@ using namespace std;
 
 
 template<class KeyData, class Data>
-class Table
-{
+class Table {
 protected:
 	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData, Data>>>> it; //type of vector iterator 
-
 	vector<pair<KeyData, Data>> arr; // dictionary
-public:
-	virtual it insert(KeyData key, Data value) //insert cacheline 
-	{
-		auto iter = arr.begin();
-		while (iter != arr.end())
-		{
 
-			if (iter->first == key)
-			{
+public:
+	virtual it insert(KeyData key, Data value) { //insert cacheline 
+		auto iter = arr.begin();
+		while (iter != arr.end()) {
+			if (iter->first == key) {
 				iter->second = value;
 				return iter;
 			}
@@ -38,13 +33,10 @@ public:
 		return iter;
 	}
 
-	virtual bool remove(KeyData key) // remove ...
-	{
+	virtual bool remove(KeyData key) { // remove ...
 		auto iter = arr.begin();
-		while (iter != arr.end())
-		{
-			if (iter->first == key)
-			{
+		while (iter != arr.end()) {
+			if (iter->first == key) {
 				arr.erase(iter);
 				return true;
 			}
@@ -53,11 +45,9 @@ public:
 		return false;
 	}
 
-	it operator[](KeyData key)// access to line`s data
-	{
+	it operator[](KeyData key) { // access to line`s data
 		auto iter = arr.begin();
-		while (iter != arr.end())
-		{
+		while (iter != arr.end()) {
 			if (iter->first == key)
 				return iter;
 			iter++;
@@ -65,13 +55,11 @@ public:
 		Data t;
 		return insert(key, t);
 	}
-	virtual it search(KeyData key) // search for line with it`s key
-	{
+	
+	virtual it search(KeyData key) { // search for line with it`s key
 		auto iter = arr.begin();
-		while (iter != arr.end())
-		{
-			if (key == iter->first)
-			{
+		while (iter != arr.end()) {
+			if (key == iter->first) {
 
 				return iter;
 			}
@@ -81,9 +69,7 @@ public:
 	}
 
 	//constructor
-	Table() {
-	
-	}
+	Table() {}
 
 	//copy constructor
 	Table(const Table& d) {
@@ -103,39 +89,32 @@ public:
 
 
 template<class KeyData, class Data>
-class Sorted_Table :protected Table<KeyData,Data>
-{
+class Sorted_Table :protected Table<KeyData, Data> {
 protected:
 	bool comp_given;
 	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
 	comp temp;
-	
+
 public:
-	Sorted_Table()
-	{
+	Sorted_Table() {
 		comp_given = 0;
 	}
 
-	Sorted_Table(comp t)
-	{
+	Sorted_Table(comp t) {
 		comp_given = true;
 		temp = t;
 	}
 
-	void sort_table()
-	{
-		if (comp_given == false)
-		{
+	void sort_table() {
+		if (comp_given == false) {
 			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)));
 		}
-		else
-		{
+		else {
 			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)), temp);
 		}
 	}
 
-	it f_binar(KeyData key)
-	{
+	it f_binar(KeyData key) {
 		auto beg = arr.begin();
 		auto end = arr.end();
 		auto mid = arr.begin() + (end - beg) / 2;
@@ -149,24 +128,22 @@ public:
 		return mid;
 	}
 
-	it insert(KeyData key, Data value) override
-	{
+	it insert(KeyData key, Data value) override {
 		auto l_iter = arr.begin();
 		auto r_iter = arr.end();
-		if (arr.size() == 0)
-		{
+		if (arr.size() == 0) {
 			arr.push_back(make_pair(key, value));
 			return arr.begin();
 		}
 
 		auto finded = f_binar(key);
 		if (finded != arr.end()) {
-			if ((finded)->first == key)
-			{
+			if ((finded)->first == key) {
 				(finded)->second = value;
 				return finded;
 			}
 		}
+
 		if (finded == arr.end()) {
 			arr.push_back(make_pair(key, value));
 			l_iter = arr.end() - 1;
@@ -178,21 +155,18 @@ public:
 		}
 	}
 
-	bool remove(KeyData key) override
-	{
+	bool remove(KeyData key) override {
 		if (arr.size() == 0) 
 			return false;
 		auto iter = f_binar(key);
-		if (iter->first == key)
-		{
+		if (iter->first == key) {
 			arr.erase(iter);
 			return true;
 		}
 		return false;
 	}
 
-	it operator[](KeyData key)
-	{
+	it operator[](KeyData key) {
 		auto iter = f_binar(key);
 		if (iter == arr.end()) {
 			Data t;
@@ -202,20 +176,18 @@ public:
 			return iter;
 	}
 
-	it search(KeyData key) override
-	{
+	it search(KeyData key) override {
 		return f_binar(key);
 	}
+
 };
 
-template<class KeyData, class Data>
-class Hash_Table :protected Table<KeyData, Data>
-{
-private:
 
+template<class KeyData, class Data>
+class Hash_Table :protected Table<KeyData, Data> {
+private:
 	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData,Data>>>> it;
 	/*typedef std::_Vector_iterator<std::_Vector_val<_Simple_types<vector<pair<KeyData, Data>>>>> big_it;*/
-
 
 	bool Key_str = false; // check if keydata is ...
 	bool Key_vec = false;
@@ -228,42 +200,26 @@ private:
 	int table_size = 0;
 
 	vector<vector<pair<KeyData,Data>>> arr;
-
-
 	it gen_iter;
-	
 	int b_iter = 0;
 	const int mx_inserted = 2;
 
-	int get_hash(vector<int> key, int razmer_table)
-	{
-
+	int get_hash(vector<int> key, int razmer_table) {
 		int ans = 0;
-
-
-		for (int i = 0; i < key.size(); i++)
-		{
+		for (int i = 0; i < key.size(); i++) {
 			ans += key[i] * pow(simple_base, i);
 		}
-
 		return ans % razmer_table;
-
-
 	} // get ahash
 
-	int get_hash(string key, int razmer_table)
-	{
+	int get_hash(string key, int razmer_table) {
 		int ans = 0;
-
-			for (int i = 0; i < key.size(); i++)
-			{
-				ans += (int)(key[i]) * pow(simple_base, i);
-			}
+		for (int i = 0; i < key.size(); i++)
+			ans += (int)(key[i]) * pow(simple_base, i);
 		return ans % razmer_table;
 	}
 
-	int get_hash(int key, int razmer_table)
-	{
+	int get_hash(int key, int razmer_table) {
 		int ans = key;
 		ans >> 13;
 		ans << 4;
@@ -273,31 +229,21 @@ private:
 		return abs(ans % razmer_table);
 	}
 	
-	int get_hash(double key, int razmer_table)
-	{
+	int get_hash(double key, int razmer_table) {
 		int ans = 0;
-	
 		string temp = to_string(key);/*  to_string(key);*/
 		string temp2 = "";
-		for (int i = 0; i < temp.size(); i++)
-		{
+		for (int i = 0; i < temp.size(); i++) {
 			if (temp[i] != '.')
 				temp2.push_back(temp[i]);
-
 		}
-			
 		ans = get_hash(temp2, razmer_table);
-
 		ans = get_hash(ans, razmer_table);
 		return get_hash(ans, razmer_table) % razmer_table;
 	}
 
 public:
-	
-
-
-	Hash_Table(int n)
-	{
+	Hash_Table(int n) {
 		n = max(1, n);
 		if (is_same_v<string,KeyData>)
 			Key_str = true;
@@ -314,8 +260,7 @@ public:
 	}
 	
 
-	it insert_hash(KeyData key, Data val)
-	{
+	it insert_hash(KeyData key, Data val) {
 		int hash = get_hash(key, table_size);
 		if (arr[hash].size() >= mx_inserted) {
 			vector<vector<pair<KeyData, Data>>> temp((table_size+1)*2);
@@ -339,38 +284,29 @@ public:
 			while (gen_iter->first != sav1)
 				operator++();
 		}
+
 		hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end())
-		{
-			if (iter->first == key)
-			{
+		while (iter != arr[hash].end()) {
+			if (iter->first == key) {
 				iter->second = val;
 				return iter;
 			}
 			iter++;
-
 		}
-		if (flag_for_iter==true){
+
+		if (flag_for_iter==true) {
 			auto sav1 = gen_iter->first;
 			arr[hash].push_back(make_pair(key, val));
-			if (hash == b_iter)
-			{
+			if (hash == b_iter) {
 				flag_for_iter = false;
 				operator++();
 			}
 				
-			
 			while (gen_iter->first != sav1)
-			{
 				operator++();
-			}
 		}
-		else
-		{
-			arr[hash].push_back(make_pair(key, val));
-		}
-		
+		else arr[hash].push_back(make_pair(key, val));		
 		iter = arr[hash].end();
 		iter--;
 		return iter;
@@ -388,88 +324,62 @@ public:
 		return sum
 	}
 
-	bool remove_hash(KeyData key) // removes ... a part of cacheline
-	{
-		
+	bool remove_hash(KeyData key) { // removes ... a part of cacheline
 		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end())
-		{
-			if (iter->first == key)
-			{
+		while (iter != arr[hash].end()) {
+			if (iter->first == key) {
 				arr[hash].erase(iter);
 				return true;
 			}
 			iter++;
-
 		}
 		return false;
 	}
 
-	it operator[](KeyData key)// access to line`s data returns vector -> iterate with in: sfkjghsfjkg
-	{
-		
+	it operator[](KeyData key) { // access to line`s data returns vector -> iterate with in: sfkjghsfjkg
 		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
 
-		while (iter != arr[hash].end())
-		{
+		while (iter != arr[hash].end()) {
 			if (iter->first == key)
-			{
 				return iter;
-			}
-
 			iter++;
 		}
-
 		Data t;
 		return insert_hash(key, t);
 	}
 
-	it search_hash(KeyData key) // search for line with it`s key
-	{
+	it search_hash(KeyData key) { // search for line with it`s key
 		auto hash = get_hash(key, table_size);
 		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end())
-		{
-			if (iter->first == key)
-			{
+		while (iter != arr[hash].end()) {
+			if (iter->first == key) 
 				return iter;
-			}
-
 			iter++;
 		}
 		if (iter == arr[hash].end())
-		{
 			throw 123;
-		}
-
 	}
 
-	it operator++()
-	{
+	it operator++() {
 		auto prev = gen_iter;
 		auto gen_iter_inner = gen_iter;
 		bool flag_for_skip = false;
-		while (b_iter != table_size)
-		{
+		while (b_iter != table_size) {
 			gen_iter_inner = arr[b_iter].begin();
-			while (gen_iter_inner != arr[b_iter].end())
-			{
-				if (!flag_for_iter)
-				{
+			while (gen_iter_inner != arr[b_iter].end()) {
+				if (!flag_for_iter) {
 					gen_iter = gen_iter_inner;
 					flag_for_iter = true;
 					return gen_iter_inner;
 				}
+
 				while ((gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)&& !flag_for_skip)
-				{
 					gen_iter_inner++;
-					
-				}
 				flag_for_skip = true;
-				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)
-				{
+				
+				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first) {
 					gen_iter = gen_iter_inner;
 					return gen_iter_inner;
 				}
@@ -479,19 +389,16 @@ public:
 		}
 		b_iter = 0;
 		flag_for_iter = false;
-		while (b_iter != table_size)
-		{
+		while (b_iter != table_size) {
 			gen_iter_inner = arr[b_iter].begin();
-			while (gen_iter_inner != arr[b_iter].end())
-			{
-				if (!flag_for_iter)
-				{
+			while (gen_iter_inner != arr[b_iter].end()) {
+				if (!flag_for_iter) {
 					gen_iter = gen_iter_inner;
 					flag_for_iter = true;
 					return gen_iter_inner;
 				}
-				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)
-				{
+
+				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first) {
 					gen_iter = gen_iter_inner;
 					return gen_iter_inner;
 				}
@@ -501,7 +408,6 @@ public:
 		}
 	}
 };
-
 
 
 template<class KeyData, class Data>
@@ -608,121 +514,88 @@ protected:
 		
 	}
 public:
-	Binary_Tree()
-	{
+	Binary_Tree() {
 		start_root = new TreeNode();
 	}
-	Binary_Tree(Data val,KeyData key)
-	{
-		start_root =new TreeNode(val,key);
-	}
-	Binary_Tree(const Binary_Tree& tree)
-	{
-		if (tree.start_root != NULL)
-		{
-			this->start_root = new TreeNode();
 
+	Binary_Tree(Data val, KeyData key) {
+		start_root = new TreeNode(val, key);
+	}
+
+	Binary_Tree(const Binary_Tree& tree) {
+		if (tree.start_root != NULL) {
+			this->start_root = new TreeNode();
 			cop_tree(this, tree.start_root);
 		}
 	}
 
 	void cop_tree(Binary_Tree* tree,TreeNode* root) {
 		tree->insert(root->key,root->value);
-
 		if (root->left != NULL)
 			cop_tree(tree, root->left);
 		if (root->right != NULL)
 			cop_tree(tree, root->right);
 	}
 
-
-	bool remove(KeyData key)
-	{
+	bool remove(KeyData key) {
 		TreeNode* temp = search(key);
-
-
-		if (!(temp==NULL) )
-		{
-			for (int i = 0; i < stack.size(); i++)
-			{
-				if (stack[i] == temp)
-				{
+		if (!(temp==NULL) ) {
+			for (int i = 0; i < stack.size(); i++) {
+				if (stack[i] == temp) {
 					stack.erase(stack.begin() + i);
 					break;
 				}
 			}
 
 			//left net right da
-			if (temp->left == NULL && temp->right != NULL)
-			{
-				if (temp != start_root)
-				{
-
-
+			if (temp->left == NULL && temp->right != NULL) {
+				if (temp != start_root) {
 					TreeNode* save = temp;
 					temp = temp->top;
 
-					if (save == temp->left)
-					{
+					if (save == temp->left) {
 						save = save->right;
 						temp->left = save;
 					}
-					else
-					{
+					else {
 						save = save->right;
-
 						temp->right = save;
-
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
 				}
-				else
-				{
-					start_root = temp->right;
-				}
+				else start_root = temp->right;
 			}
 			//left da right net
-			else if (temp->left != NULL && temp->right == NULL)
-			{
-				if (start_root != temp)
-				{
+			else if (temp->left != NULL && temp->right == NULL) {
+				if (start_root != temp) {
 					TreeNode* save = temp;
 					temp = temp->top;
 
-					if (save == temp->left)
-					{
+					if (save == temp->left) {
 						save = save->left;
 						temp->left = save;
 					}
-					else
-					{
+					else {
 						save = save->left;
-
 						temp->right = save;
-
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
 				}
-				else
-				{
-					start_root = temp->left;
-				}
+				else start_root = temp->left;
 			}
 
 			//tout est la
-			else if (temp->left != NULL && temp->right != NULL)
-			{
+			else if (temp->left != NULL && temp->right != NULL) {
 				auto save = temp;
 				auto s_left = temp->left;
 				auto s_right = temp->right;
 				temp = temp->right;
 				bool flag = false;
-				while (!flag)
-				{
+				while (!flag) {
 					if (temp->left == NULL)
 						flag++;
 					else
@@ -736,15 +609,11 @@ public:
 				blank->visited = min_r_branch->visited;
 
 				//join right branch
-				if (min_r_branch != s_right)
-				{
-					if (min_r_branch->right != NULL)
-					{
+				if (min_r_branch != s_right) {
+					if (min_r_branch->right != NULL) {
 						blank->right = min_r_branch->right;
 						min_r_branch->right->top = blank;
 					}
-
-					
 
 					auto skipper = s_right;
 					while (skipper->left != min_r_branch)
@@ -752,98 +621,68 @@ public:
 					skipper->left = NULL;
 					skipper = back_to_root(skipper, s_right);
 					s_right = skipper;
-					
-
 					temp = blank;
 					while (temp->right != NULL)
 						temp = temp->right;
-
 					temp->right = s_right;
 					s_right->top = temp;
 					temp = back_to_root(temp, blank);
 					blank = temp;
 				}
-				else
-				{
-					if (s_right->right != NULL)
-					{
+				else {
+					if (s_right->right != NULL) {
 						blank->right = s_right->right;
 						s_right->right->top = blank;
 					}
-
 				}
-
 
 				//join left branch
 				blank->left = s_left;
 				s_left->top = blank;
 
-
 				//join main tree
-				if (save != start_root)
-				{
+				if (save != start_root) {
 					auto s_top = save->top;
-					if (s_top->left == save)
-					{
+					if (s_top->left == save) {
 						s_top->left = blank;
 						blank->top = s_top;
 					}
-					else
-					{
+					else {
 						s_top->right = blank;
 						blank->top = s_top;
-
 					}
 					s_top = back_to_root(s_top, start_root);
 					start_root = s_top;
 				}
-				else
-				{
-					start_root = blank;
-				}
+				else start_root = blank;
 				//if it dont work properly than try 2 var
-
-
 			}
 
 			//leaf
-			else if (temp->left == NULL && temp->right == NULL)
-			{
-				if (temp != start_root)
-				{
+			else if (temp->left == NULL && temp->right == NULL) {
+				if (temp != start_root) {
 					auto save = temp->top;
-					if (save->left == temp)
-					{
+					if (save->left == temp) {
 						save->left = NULL;
 						temp->top = NULL;
-
 					}
-					else
-					{
+					else {
 						save->right = NULL;
 						temp->top = NULL;
-
 					}
 					save = back_to_root(save, start_root);
 					start_root = save;
 				}
-				else
-				{
+				else {
 					start_root = NULL;
 					flag_not_null++;
 				}
-				
-
 			}
-
 			stack.clear();
 			stack.shrink_to_fit();
 			remaster_stack(start_root);
-
 			return true;
-
 		}
-
 		return false;
 	}
 
@@ -851,25 +690,15 @@ public:
 		return stack.size();
 	}
 
-	it insert(KeyData key,Data val)
-	{
+	it insert(KeyData key,Data val) {
 		TreeNode* temp = start_root;
-		
-		if (flag_not_null)
-		{
-			while (1)
-			{
-
-				if (temp->key >= key)
-				{
+		if (flag_not_null) {
+			while (1) {
+				if (temp->key >= key) {
 					if (temp->left != nullptr)
-					{
 						temp = temp->left;
-					}
-					else
-					{
+					else {
 						TreeNode* ans = new TreeNode(key,val);
-
 						ans->top = temp;
 						temp->left = ans;
 						temp = back_to_root(temp, start_root);
@@ -879,17 +708,12 @@ public:
 						remaster_stack(start_root);
 						return ans;
 					}
-
 				}
 
-				if (temp->key < key)
-				{
+				if (temp->key < key) {
 					if (temp->right != nullptr)
-					{
 						temp = temp->right;
-					}
-					else
-					{
+					else {
 						TreeNode* ans = new TreeNode(key,val);
 						ans->top = temp;
 						temp->right = ans;
@@ -902,10 +726,8 @@ public:
 					}
 				}
 			}
-
 		}
-		else
-		{
+		else {
 			start_root->value = val;
 			start_root->key = key;
 			flag_not_null = true;
@@ -913,93 +735,59 @@ public:
 			stack.shrink_to_fit();
 			remaster_stack(start_root);
 			return temp;
-
 		}
-
 	}
 
-	it search(KeyData key)
-	{
+	it search(KeyData key) {
 		TreeNode* temp = start_root;
-		if (temp != NULL)
-		{
-			while (1)
-			{
+		if (temp != NULL) {
+			while (1) {
 				if (temp->key == key)
 					return temp;
 
 				if (temp->key > key)
-				{
 					if (temp->left != NULL)
-					{
 						temp = temp->left;
-					}
-					else
-					{
-						
-						return NULL;
-					}
+					else return NULL;
 
-				}
-
-				if (temp->key < key)
-				{
+				if (temp->key < key) 
 					if (temp->right != NULL)
-					{
 						temp = temp->right;
-					}
-					else
-					{
-						
-						return NULL;
-					}
-				}
+					else return NULL;
 			}
 		}
 	}
 
-	it operator++()
-	{
-
+	it operator++() {
 		if (stack.size() == 0)
 			return new TreeNode();
 
-		if (check())
-		{
+		if (check()) {
 			int min = INT_MAX;
 			int pos = 0;
-			for (int i = 0; i < stack.size(); i++)
-			{
-				if (stack[i]->visited == false && stack[i]->key < min)
-				{
+			for (int i = 0; i < stack.size(); i++) 
+				if (stack[i]->visited == false && stack[i]->key < min) {
 					min = stack[i]->key;
 					pos = i;
-
 				}
-			}
+
 			stack[pos]->visited = true;
 			iter_pos = stack[pos];
-
 			return iter_pos;
 		}
-		else
-		{
+		else {
 			for (auto i : stack)
 				i->visited = false;
 			auto t = this->operator++();
 			return t;
 		}
-
 	}
 
-	void print()
-	{
+	void print() {
 		system("cls");
 		position.X = 50;
 		position.Y = 0;
-
 		print_inner(start_root, position);
-
 		position.X = 0;
 		position.Y = 30;
 		SetConsoleCursorPosition(hConsole, position);
@@ -1015,36 +803,30 @@ public:
 		else {
 			auto left_height = height_start_root(root->left);
 			auto right_height = height_start_root(root->right);
-
 			return max(left_height, right_height) + 1;
 		}
 	}
 
-	int size_of_tree()
-	{
+	int size_of_tree() {
 		return stack.size();
 	}
 };
 
 
 template<class KeyData,class Data>
-class AVL_Tree : public Binary_Tree<KeyData,Data>
-{
-	int set_height(TreeNode* root)
-	{
+class AVL_Tree : public Binary_Tree<KeyData,Data> {
+	int set_height(TreeNode* root) {
 		int t1 = 0;
 		int t2 = 0;
 		if (root->left != NULL)
 			t1=set_height(root->left);
 		if (root->right != NULL)
 			t2 = set_height(root->right);
-		if (root->left == NULL && root->right == NULL)
-		{
+		if (root->left == NULL && root->right == NULL) {
 			root->Height = 0;
 			return 0;
 		}
-		else
-		{
+		else {
 			root->Height = max(t1, t2) + 1;
 			return root->Height;
 		}
@@ -1068,8 +850,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data>
 		return h_r - h_l;
 	}
 
-	it SmallRotateRight(TreeNode* p) // правый поворот вокруг p
-	{
+	it SmallRotateRight(TreeNode* p) { // правый поворот вокруг p
 		auto q = p->left;
 		p->left = q->right;
 		if (p->left != NULL)
@@ -1081,8 +862,8 @@ class AVL_Tree : public Binary_Tree<KeyData,Data>
 
 		return q;
 	}
-	it SmallRotateLeft(TreeNode* q) // левый поворот вокруг q
-	{
+
+	it SmallRotateLeft(TreeNode* q) { // левый поворот вокруг q
 		auto p = q->right;
 		q->right = p->left;
 		if (q->right != NULL)
@@ -1124,27 +905,20 @@ class AVL_Tree : public Binary_Tree<KeyData,Data>
 		}
 	}
 
-	void print_inner(TreeNode* root, COORD position)
-	{
-		if (root != NULL)
-		{
+	void print_inner(TreeNode* root, COORD position) {
+		if (root != NULL) {
 			SetConsoleCursorPosition(hConsole, position);
-
 			cout << root->key;
 			auto pos = position;
-			if (root->left != NULL)
-			{
+			if (root->left != NULL) {
 				int temp =  (root->Height*2);
-				
 				pos.X = pos.X - temp;
 				pos.Y = pos.Y + 1;
 				print_inner(root->left, pos);
-
-
 			}
 			pos = position;
-			if (root->right != NULL)
-			{
+
+			if (root->right != NULL) {
 				int temp = (root ->Height*2);
 				pos.X = pos.X +temp;
 				pos.Y = pos.Y + 1;
@@ -1152,21 +926,18 @@ class AVL_Tree : public Binary_Tree<KeyData,Data>
 			}
 		}
 	}
+
 public:
-	AVL_Tree()
-	{
-		
+	AVL_Tree() {
 		start_root = new  TreeNode();
 	}
-	AVL_Tree(KeyData key,Data val)
-	{
+
+	AVL_Tree(KeyData key,Data val) {
 		start_root = new TreeNode(key, val);
 		flag_not_null = true;
 	}
 	
-	
-	it insert(KeyData key, Data val) 
-	{
+	it insert(KeyData key, Data val) {
 		auto ans = Binary_Tree::insert(key, val);
 		set_height(start_root);
 
@@ -1174,23 +945,20 @@ public:
 
 		return ans;
 	}
-	bool remove(KeyData key)
-	{
+
+	bool remove(KeyData key) {
 		auto ans = Binary_Tree::remove(key);
 		set_height(start_root);
 		balance(start_root);
 		return ans;
 	}
 	
-	void print()
-		{
+	void print() {
 		system("cls");
 		position.X = 50;
 		position.Y = 0;
-
 		print_inner(start_root, position);
 	}
-	
 };
 
 template<class KeyData, class Data>
@@ -1237,7 +1005,6 @@ private:
 			return g->left;
 	}
 
-
 public:
 
 	RB_Tree()
@@ -1253,7 +1020,6 @@ public:
 	void rotate_left(RBNode* node)//left RB turn
 	{
 		RBNode* temp = node->right;
-
 		temp->parent = node->parent;
 		if (node->parent != NULL) {
 			if (node->parent->left == node)
@@ -1261,19 +1027,15 @@ public:
 			else
 				node->parent->right = temp;
 		}
-
 		node->right = temp->left;
 		if (temp->left != NULL)
 			temp->left->parent = n;
-
 		node->parent = temp;
 		temp->left = node;
 	}
 
-	void rotate_right(RBNode* node)
-	{
+	void rotate_right(RBNode* node) {
 		RBNode* temp = node->left;
-
 		temp->parent = node->parent; /* при этом, возможно, temp становится корнем дерева */
 		if (node->parent != NULL) {
 			if (node->parent->left == node)
@@ -1281,11 +1043,9 @@ public:
 			else
 				node->parent->right = temp;
 		}
-
 		node->left = temp->right;
 		if (temp->right != NULL)
 			temp->right->parent = node;
-
 		node->parent = temp;
 		temp->right = node;
 	}

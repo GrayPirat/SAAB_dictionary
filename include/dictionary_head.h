@@ -556,12 +556,12 @@ public:
 					if (save == temp->left) {
 						save = save->right;
 						temp->left = save;
-						temp = temp->left;
+						//temp = temp->left;
 					}
 					else {
 						save = save->right;
 						temp->right = save;
-						temp = temp->right;
+						//temp = temp->right;
 					}
 
 					save->top = temp;
@@ -580,12 +580,12 @@ public:
 					if (save == temp->left) {
 						save = save->left;
 						temp->left = save;
-						temp = temp->left;
+						//temp = temp->left;
 					}
 					else {
 						save = save->left;
 						temp->right = save;
-						temp=temp->right;
+						//temp=temp->right;
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
@@ -854,7 +854,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		q->right = p;
 		q->top = p->top;
 		p->top = q;
-		if (p->left != NULL)
+		//if (p->left != NULL)
 		p->left->top = p;
 		return q;
 	}
@@ -865,7 +865,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		p->left = q;
 		p->top = q->top;
 		q->top = p;
-		if (p->right !=NULL)
+		//if (p->right !=NULL)
 		p->right->top = p;
 		return p;
 	}

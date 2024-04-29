@@ -99,7 +99,7 @@ TEST(Binary_Tree, bintree_operator_plusplus) {
 		a.operator++()->value++;
 	}
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ(a.search(vec[i] + 1)->value, vec[i]+1);
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]+1);
 	}
 }
 
@@ -108,15 +108,14 @@ TEST(Binary_Tree, bintree_copy_constr) {
 	vector<int> vec = { 1,2,6,-3,3 };
 	for (int i = 0; i < vec.size(); i++) {
 		a.insert(vec[i],vec[i]);
-
 	}
+
 	Binary_Tree<int, int>b(a);
 	for (int i = 0; i < a.get_size(); i++) {
 		b.operator++()->value += 10;
 	}
 	
-	
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ((b.search(vec[i] + 10)->value) - (a.search(vec[i])->value), 10);
+		EXPECT_EQ((b.search(vec[i])->value) - (a.search(vec[i])->value), 10);
 	}
 }

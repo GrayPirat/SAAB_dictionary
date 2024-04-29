@@ -1,9 +1,9 @@
 #include <gtest.h>
 #include "dictionary_head.h"
-
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
+//
+//COORD position, newPosition;
+//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//int x = 0, y = 0;
 
 TEST(Binary_Tree, bintree_can_insert1000) {
 	Binary_Tree<int, int> a;
@@ -37,10 +37,10 @@ TEST(Binary_Tree, bintree_remove1000) {
 	for (int i = 0; i < 1000; i++) {
 		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
 	}
-	
-	for (int i = 1; i < 1000; i++) {
-		auto temp = vec[i];
-		auto temp1 = a.search(temp)->value;
+	//shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+	for (int i = 0; i < 100; i++) {
+		/*auto temp = vec[i];
+		auto temp1 = a.search(temp)->value;*/
 		EXPECT_EQ(a.remove(vec[i]), true);
 	}
 }

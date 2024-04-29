@@ -556,16 +556,20 @@ public:
 					if (save == temp->left) {
 						save = save->right;
 						temp->left = save;
+						temp = temp->left;
 					}
 					else {
 						save = save->right;
 						temp->right = save;
+						temp = temp->right;
 					}
+
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
 				}
-				else start_root = temp->right;
+				else
+					start_root = temp->right;
 			}
 			//left da right net
 			else if (temp->left != NULL && temp->right == NULL) {
@@ -576,10 +580,12 @@ public:
 					if (save == temp->left) {
 						save = save->left;
 						temp->left = save;
+						temp = temp->left;
 					}
 					else {
 						save = save->left;
 						temp->right = save;
+						temp=temp->right;
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
@@ -848,6 +854,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		q->right = p;
 		q->top = p->top;
 		p->top = q;
+		if (p->left != NULL)
 		p->left->top = p;
 		return q;
 	}
@@ -858,6 +865,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		p->left = q;
 		p->top = q->top;
 		q->top = p;
+		if (p->right !=NULL)
 		p->right->top = p;
 		return p;
 	}
@@ -912,9 +920,9 @@ public:
 	it insert(KeyData key, Data val) {
 		auto ans = Binary_Tree::insert(key, val);
 		set_height(start_root);
-		print();
+		//print();
 		balance(start_root);
-		print();
+		//print();
 		return ans;
 	}
 

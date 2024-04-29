@@ -33,6 +33,13 @@ int main()
     temp.insert(30, 30);
     temp.insert(34, 34);
     temp.insert(36, 36);
+    temp.insert(21, 21);
+    temp.insert(12, 12);
+    temp.insert(5, 5);
+    temp.insert(4, 4);
+    temp.insert(3, 3);
+    temp.insert(2, 2);
+    temp.insert(1, 1);
     temp.remove(20);
     temp.print();
     temp.remove(22);

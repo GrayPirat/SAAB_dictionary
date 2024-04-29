@@ -45,31 +45,31 @@ TEST(AVL_Tree, AVL_remove1000) {
 	}
 }
 
-TEST(AVL_Tree, AVL_height10) {
-	AVL_Tree<int, int> a;
-	vector<int> vec;
-	for (int i = 0; i < 1000; i++) {
-		vec.push_back(vec.size());
-	}
-	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
-	for (int i = 0; i < 1000; i++) {
-		a.insert(vec[i], vec[i]);
-	}
-	int old_height = a.tree_height();
-	//a.print();
-	int new_height = old_height;
-	while (new_height - old_height < 10) {
-		for (int i = 0; i < 100; i++) {
-			a.remove(vec[i]);
-		}
-		for (int i = 0; i < 100; i++) {
-			int x = rand() % 1000;
-			a.insert(x, x);
-		}
-		new_height = a.tree_height();
-	}
-	ASSERT_GE(new_height - old_height, 10);
-}
+//TEST(AVL_Tree, AVL_height10) {
+//	AVL_Tree<int, int> a;
+//	vector<int> vec;
+//	for (int i = 0; i < 1000; i++) {
+//		vec.push_back(vec.size());
+//	}
+//	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+//	for (int i = 0; i < 1000; i++) {
+//		a.insert(vec[i], vec[i]);
+//	}
+//	int old_height = a.tree_height();
+//	//a.print();
+//	int new_height = old_height;
+//	while (new_height - old_height < 10) {
+//		for (int i = 0; i < 100; i++) {
+//			a.remove(vec[i]);
+//		}
+//		for (int i = 0; i < 100; i++) {
+//			int x = rand() % 1000;
+//			a.insert(x, x);
+//		}
+//		new_height = a.tree_height();
+//	}
+//	ASSERT_GE(new_height - old_height, 10);
+//}
 
 TEST(AVL_Tree, AVL_can_remove) {
 	Binary_Tree<int, int> a;

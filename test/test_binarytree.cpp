@@ -1,9 +1,9 @@
 #include <gtest.h>
 #include "dictionary_head.h"
 
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
+//COORD position, newPosition;
+//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//int x = 0, y = 0;
 
 TEST(Binary_Tree, bintree_can_insert1000) {
 	Binary_Tree<int, int> a;
@@ -58,7 +58,9 @@ TEST(Binary_Tree, bintree_height10) {
 	int old_height = a.tree_height();
 	//a.print();
 	int new_height = old_height;
+	int temp = 0;
 	while (new_height - old_height < 10) {
+		
 		for (int i = 0; i < 100; i++) {
 			a.remove(vec[i]);
 		}
@@ -66,9 +68,11 @@ TEST(Binary_Tree, bintree_height10) {
 			int x = rand() % 1000;
 			a.insert(x,x);
 		}
+		
 		new_height = a.tree_height();
 	}
-	ASSERT_GE(new_height-old_height, 10);
+
+	ASSERT_LE(10, new_height - old_height);
 }
 
 TEST(Binary_Tree, bintree_can_remove) {
@@ -99,7 +103,7 @@ TEST(Binary_Tree, bintree_operator_plusplus) {
 		a.operator++()->value++;
 	}
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ(a.search(vec[i] + 1)->value, vec[i]+1);
+		EXPECT_EQ(a.search(vec[i] /*+1*/)->value, vec[i]+1);
 	}
 }
 
@@ -117,6 +121,6 @@ TEST(Binary_Tree, bintree_copy_constr) {
 	
 	
 	for (int i = 0; i < a.get_size(); i++) {
-		EXPECT_EQ((b.search(vec[i] + 10)->value) - (a.search(vec[i])->value), 10);
+		EXPECT_EQ((b.search(vec[i] /*+ 10*/)->value) - (a.search(vec[i])->value), 10);
 	}
 }

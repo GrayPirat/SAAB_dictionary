@@ -1138,6 +1138,7 @@ private:
 							papa->right->color = black;
 							papa->color = red;
 							SmallRotateLeft(papa);
+							break;
 						}
 						bool flag = false;
 						if (papa->right->right != NULL || papa->right->left != NULL)
@@ -1165,22 +1166,38 @@ private:
 								
 
 							}//eto tol`ko vse != null to do if ==
-							
-
-
+							else
+							{
+								if (papa->right->right != NULL)
+								{
+									if (papa->right->right->color == black)
+									{
+										papa->right->left->color == black;
+										papa->right->color = red;
+										SmallRotateRight(papa->right);
+									}
+									papa->right->color = papa->color;
+									papa->color = black;
+									papa->right->right->color = black;
+									SmallRotateLeft(papa);
+									p = start_root;
+								}
+							}
 						}
+						
 
 					}
 				}
-				else
+				else if (papa->right = p)
 				{
-					if (papa->right != NULL)
+					if (papa->left != NULL)
 					{
 						if (papa->left->color == red)
 						{
 							papa->left->color = black;
 							papa->color = red;
-							SmallRotateLeft(papa);
+							SmallRotateRight(papa);
+							break;
 						}
 						bool flag = false;
 						if (papa->left->right != NULL || papa->left->left != NULL)
@@ -1188,37 +1205,45 @@ private:
 							if (papa->left->right != NULL && papa->left->left != NULL)
 							{
 								if (papa->left->right->color == black && papa->left->left->color == black)
-									papa->left->color = red; flag++;
+								{
+									papa->left->color = red;
+								}
+								else
+								{
+									if (papa->left->right->color == black)
+									{
+										papa->left->left->color == black;
+										papa->left->color = red;
+										SmallRotateLeft(papa->left);
+									}
+									papa->left->color = papa->color;
+									papa->color = black;
+									papa->left->right->color = black;
+									SmallRotateRight(papa);
+									p = start_root;
+								}
 
-							}
 
-							if (!flag)
+							}//eto tol`ko vse != null to do if ==
+							else
 							{
 								if (papa->left->right != NULL)
 								{
 									if (papa->left->right->color == black)
 									{
-										if (papa->left->left != NULL)
-										{
-											papa->left->left->color = black;
-											papa->left->color = red;
-											SmallRotateRight(papa->left);
-										}
-
+										papa->left->left->color == black;
+										papa->left->color = red;
+										SmallRotateLeft(papa->left);
 									}
 									papa->left->color = papa->color;
 									papa->color = black;
 									papa->left->right->color = black;
-									SmallRotateLeft(papa);
+									SmallRotateRight(papa);
 									p = start_root;
-
 								}
-
-
 							}
-
-
 						}
+
 
 					}
 				}
@@ -1389,11 +1414,11 @@ public:
 	}
 
 	
-	bool remove(KeyData key, Data val)
+	bool remove_inner(KeyData key, Data val,bool flag)
 	{
 		TreeNode* temp = Binary_Tree::search(key);
 
-		if (!(temp == NULL)) {
+		if (!(temp == NULL) && flag) {
 			for (int i = 0; i < stack.size(); i++) {
 				if (stack[i] == temp) {
 					stack.erase(stack.begin() + i);
@@ -1419,12 +1444,20 @@ public:
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
-					if (color ==black)
+					if (color ==black && flag)
 						check_out_delete(save);
 				}
 				else
 				{
-					start_root = temp->right; start_root->top = NULL; check_out_delete(start_root);
+					start_root = temp->right;
+					start_root->top = NULL;
+					if (flag)
+					{
+						bool flag_right = start_root->right != NULL ? 1 : 0;
+						if (flag_right)
+							check_out_delete(start_root->right);
+					}
+						
 				}
 					
 			}
@@ -1447,14 +1480,20 @@ public:
 					
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
-					if (color ==black)
+					if (color ==black && flag)
 						check_out_delete(save);
 				}
 				else
 				{
 					start_root = temp->left;
 					start_root->top = NULL;
-					check_out_delete(start_root);
+					if (flag)
+					{
+						bool flag_left = start_root->left != NULL ? 1 : 0;
+						if (flag_left)
+							check_out_delete(start_root->left);
+					}
+						
 				}
 			}
 			//leaf
@@ -1469,6 +1508,7 @@ public:
 						save->right = NULL;
 						temp->top = NULL;
 					}
+
 					save = back_to_root(save, start_root);
 					start_root = save;
 				}
@@ -1502,21 +1542,10 @@ public:
 				blank->visited = min_r_branch->visited;
 				blank->color = min_r_branch->color;
 
-				/*if (min_r_branch != s_right)
-				{
-					if (min_r_branch->right != NULL)
-					{
-						auto baza = min_r_branch->right;
-						baza->top = min_r_branch->top;
-						min_r_branch->top->left = baza;
-					}
-					else
-					{
-						min_r_branck->top->left = NULL;
-					}
-				}*/
-				remove(min_r_branch->key, min_r_branch->value);
-
+				
+				remove_inner(min_r_branch->key, min_r_branch->value,0);
+				s_right = temp->right;
+				
 				blank->left = s_left;
 				s_left->top = blank;
 
@@ -1525,7 +1554,8 @@ public:
 
 				if (save != start_root) {
 					auto s_top = save->top;
-					if (s_top->left == save) {
+					if (s_top->left == save) 
+					{
 						s_top->left = blank;
 						blank->top = s_top;
 					}
@@ -1538,8 +1568,12 @@ public:
 				}
 				else 
 					start_root = blank; 
-				if (color == black)
+				if (color == black && flag)
+				{
+					print();
 					check_out_delete(blank);
+				}
+					
 			}
 
 			stack.clear();
@@ -1550,6 +1584,10 @@ public:
 		return false;
 	}
 
+	bool remove(KeyData key, Data val, bool flag = true)
+	{
+		return (remove_inner(key, val, flag));
+	}
 
 	it search(KeyData key)
 	{

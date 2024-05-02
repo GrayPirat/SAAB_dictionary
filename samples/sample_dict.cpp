@@ -40,9 +40,11 @@ int main()
     }
     
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 6; i > 0; i--) {
         auto temp = vec[i];
         a.print();
         a.remove(temp, temp);
     }
+    a.insert(5, 5);
+    a.print();
 }

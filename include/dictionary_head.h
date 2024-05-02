@@ -414,6 +414,7 @@ template<class KeyData, class Data>
 class Binary_Tree
 {
 protected:
+	enum colors { red, black };
 	struct TreeNode
 	{
 		Data value;
@@ -422,11 +423,11 @@ protected:
 		TreeNode* left;
 		TreeNode* right;
 		TreeNode* top;
-
+		colors color;
 
 		int Height;
 		bool visited = false;
-		TreeNode() :value(NULL),key(NULL), left(NULL), right(NULL), top(NULL), visited(false) {}
+		TreeNode() :value(NULL),key(NULL), left(NULL), right(NULL), top(NULL), visited(false),color(black) {}
 
 		TreeNode(KeyData key,Data value) : value(value),key(key), left(NULL), right(NULL), top(NULL), visited(false),Height(0) {}
 	};
@@ -478,7 +479,7 @@ protected:
 				pos.Y = position.Y + 1;
 				SetConsoleCursorPosition(hConsole, pos);
 				cout << '/';*/
-				pos.X = pos.X - 4;
+				pos.X = pos.X - 5;
 				pos.Y = pos.Y + 1;
 				print_inner(root->left, pos);
 				
@@ -491,7 +492,7 @@ protected:
 				pos.Y = position.Y + 1;
 				SetConsoleCursorPosition(hConsole, pos);
 				cout << '\\';*/
-				pos.X = pos.X + 4;
+				pos.X = pos.X + 5;
 				pos.Y = pos.Y + 1;
 				print_inner(root->right, pos);
 			}
@@ -964,187 +965,591 @@ public:
 template<class KeyData, class Data>
 class RB_Tree : protected Binary_Tree<KeyData, Data> {
 private:
-	enum colors {red, black};
+	
 
-	struct RBNode {
-		RBNode* parent, * left, * right;
-		colors color;
-		KeyData key;
-		Data value;
+	it SmallRotateRight(TreeNode* p) { // правый поворот вокруг p
+		auto save =p;
+		bool flag_start_root = save == start_root ? true: false;
+		
+		auto q = p->left;
+		
 
-		RBNode (  KeyData key, Data val, colors color): value(val), key(key), color(color) {}
-
-		RBNode(TreeNode* temp)
+		if (flag_start_root == false)
 		{
-			parent = temp->top;
-			color = red;
-			key = temp->key;
-			value = temp->value;
-			left = temp->left();
+			if (save->top->left == save)
+			{
+				p->left = q->right;
+				if (p->left != NULL)
+					p->left->top = p;
+				q->right = p;
+				q->top = p->top;
+				p->top->left = q;
+				p->top = q;
+
+			}
+			else
+			{
+				p->left = q->right;
+				if (p->left != NULL)
+					p->left->top = p;
+				q->right = p;
+				q->top = p->top;
+				p->top->right = q;
+				p->top = q;
+			}
 		}
-	};
+		else
+		{
+			p->left = q->right;
+			if (p->left != NULL)
+				p->left->top = p;
+			q->right = p;
+			q->top = p->top;
+			p->top = q;
+			start_root = q;
+		}
+			
+		return q;
+	}
+	
+	it SmallRotateLeft(TreeNode* q) { // левый поворот вокруг q
+		auto save =q;
+		bool flag_start_root = save == start_root ? true : false;
+		auto p = q->right;
+		
+		
+		if (!flag_start_root)
+		{
+			if (save->top->left == save)
+			{
+				q->right = p->left;
+				if (q->right != NULL)
+					q->right->top = q;
+				p->left = q;
+				p->top = q->top;
+				q->top->left = p;
+				q->top = p;
 
+				
+			}
+			else
+			{
+				q->right = p->left;
+				if (q->right != NULL)
+					q->right->top = q;
+				p->left = q;
+				p->top = q->top;
+				q->top->right = p;
+				q->top = p;
+			}
+				
+		}
+		else
+		{
+			q->right = p->left;
+			if (q->right != NULL)
+				q->right->top = q;
+			p->left = q;
+			p->top = q->top;
+			q->top = p;
+			start_root = p;
+		}
+			
+		
+		
+		
+		return p;
+	}
+	
 
-	vector<RBNode*> stack;
-
-	it grandparent(RBNode* node)
+	it grandparent(TreeNode* node)
 	{
-		if ((node != NULL) && (node->parent != NULL))
-			return node->parent->parent;
+		if ((node != NULL) && (node->top != NULL))
+			return node->top->top;
 		else
 			return NULL;
 	}
 
-	it Uncle(RBNode* node) {
+	it Uncle(TreeNode* node) {
 	    it g = grandparent(node);
 		if (g == NULL)
 			return NULL;
-		if (node->parent == g->left)
+		if (node->top == g->left)
 			return g->right;
 		else
 			return g->left;
 	}
 
+	void print_inner(TreeNode* root, COORD position)
+	{
+		if (root != NULL)
+		{
+			SetConsoleCursorPosition(hConsole, position);
+			if (root->color == red)
+				SetConsoleTextAttribute(hConsole, 12);
+			else
+				SetConsoleTextAttribute(hConsole, 15);
+			cout << root->key;
+			auto pos = position;
+			if (root->left != NULL)
+			{
+
+				/*pos.X = position.X - rashod/2;
+				pos.Y = position.Y + 1;
+				SetConsoleCursorPosition(hConsole, pos);
+				cout << '/';*/
+				pos.X = pos.X - 4;
+				pos.Y = pos.Y + 1;
+				print_inner(root->left, pos);
+
+
+			}
+			pos = position;
+			if (root->right != NULL)
+			{
+				/*pos.X = position.X + rashod/2;
+				pos.Y = position.Y + 1;
+				SetConsoleCursorPosition(hConsole, pos);
+				cout << '\\';*/
+				pos.X = pos.X + 4;
+				pos.Y = pos.Y + 1;
+				print_inner(root->right, pos);
+			}
+		}
+	}
+
+	void check_out_delete(TreeNode* p)
+	{
+		while (p->color == black && p->top != NULL)
+		{
+			if (p->top != NULL)
+			{
+				auto  papa = p->top;
+				if (papa->left == p)
+				{
+					if (papa->right != NULL)
+					{
+						if (papa->right->color == red)
+						{
+							papa->right->color = black;
+							papa->color = red;
+							SmallRotateLeft(papa);
+						}
+						bool flag = false;
+						if (papa->right->right != NULL || papa->right->left != NULL)
+						{
+							if (papa->right->right != NULL && papa->right->left != NULL)
+							{
+								if (papa->right->right->color == black && papa->right->left->color == black)
+								{
+									papa->right->color = red;
+								}
+								else
+								{
+									if (papa->right->right->color == black)
+									{
+										papa->right->left->color == black;
+										papa->right->color = red;
+										SmallRotateRight(papa->right);
+									}
+									papa->right->color = papa->color;
+									papa->color = black;
+									papa->right->right->color = black;
+									SmallRotateLeft(papa);
+									p = start_root;
+								}
+								
+
+							}//eto tol`ko vse != null to do if ==
+							
+
+
+						}
+
+					}
+				}
+				else
+				{
+					if (papa->right != NULL)
+					{
+						if (papa->left->color == red)
+						{
+							papa->left->color = black;
+							papa->color = red;
+							SmallRotateLeft(papa);
+						}
+						bool flag = false;
+						if (papa->left->right != NULL || papa->left->left != NULL)
+						{
+							if (papa->left->right != NULL && papa->left->left != NULL)
+							{
+								if (papa->left->right->color == black && papa->left->left->color == black)
+									papa->left->color = red; flag++;
+
+							}
+
+							if (!flag)
+							{
+								if (papa->left->right != NULL)
+								{
+									if (papa->left->right->color == black)
+									{
+										if (papa->left->left != NULL)
+										{
+											papa->left->left->color = black;
+											papa->left->color = red;
+											SmallRotateRight(papa->left);
+										}
+
+									}
+									papa->left->color = papa->color;
+									papa->color = black;
+									papa->left->right->color = black;
+									SmallRotateLeft(papa);
+									p = start_root;
+
+								}
+
+
+							}
+
+
+						}
+
+					}
+				}
+
+			}
+
+		}
+		p->color = black;
+		start_root->color = black;
+	};
+
+	bool check_out_ins(it node)
+	{
+		if (node == start_root)
+		{
+			node->color = colors::black;
+			return true;
+		}
+		while (node->top != NULL)
+		{
+			if (node->top->color == red)
+			{
+				auto ded = grandparent(node);
+				if (ded != NULL)
+				{
+					auto papa = node->top;
+					if (papa == ded->left)
+					{
+						auto un = Uncle(node);
+						if (un != NULL)
+						{
+							if (un->color == colors::red)
+							{
+								papa->color = black;
+								un->color = black;
+								ded->color = red;
+								node = ded;
+
+							}
+							else
+							{
+								if (node == node->top->right)
+								{
+									node = papa;
+									SmallRotateLeft(node);
+								}
+								ded = grandparent(node);
+								papa = node->top;
+								papa->color = black;
+								ded->color = red;
+								SmallRotateRight(ded);
+							}
+						}
+						else
+						{
+							if (node == node->top->right)
+							{
+								node = papa;
+								SmallRotateLeft(node);
+							}
+							ded = grandparent(node);
+							papa = node->top;
+							papa->color = black;
+							ded->color = red;
+							SmallRotateRight(ded);
+						}
+
+					}
+					else
+					{
+						auto un = Uncle(node);
+						if (un != NULL)
+						{
+							if (un->color == red)
+							{
+								papa->color = black;
+								un->color = black;
+								ded->color = red;
+								node = ded;
+								if (node->top == NULL)
+									break;
+							}
+							else
+							{
+								if (node == papa->left)
+								{
+									node = node->top;
+									SmallRotateRight(node);
+
+								}
+								papa->color = black;
+								ded->color = red;
+								SmallRotateLeft(ded);
+
+							}
+						}
+						else
+						{
+							if (node == papa->left)
+							{
+								node = node->top;
+								SmallRotateRight(node);
+							}
+							papa->color = black;
+							ded->color = red;
+							SmallRotateLeft(ded);
+						}
+
+
+
+					}
+				}
+				else
+					node = node->top;
+			}
+			else
+				break;
+		}
+		start_root->color = black;
+		return true;
+	}
 public:
+
 
 	RB_Tree()
 	{
 
-		start_root = new  RBNode();
+		start_root = new TreeNode();
 	}
 	RB_Tree(KeyData key, Data val)
 	{
 		start_root = new TreeNode(key, val);
 		flag_not_null = true;
 	}
-	void rotate_left(RBNode* node)//left RB turn
-	{
-		RBNode* temp = node->right;
-		temp->parent = node->parent;
-		if (node->parent != NULL) {
-			if (node->parent->left == node)
-				node->parent->left = temp;
-			else
-				node->parent->right = temp;
-		}
-		node->right = temp->left;
-		if (temp->left != NULL)
-			temp->left->parent = n;
-		node->parent = temp;
-		temp->left = node;
+	
+
+	
+	
+	void print() {
+		system("cls");
+		position.X = 50;
+		position.Y = 0;
+		print_inner(start_root, position);
+		position.X = 0;
+		position.Y = 30;
+		SetConsoleCursorPosition(hConsole, position);
 	}
 
-	void rotate_right(RBNode* node) {
-		RBNode* temp = node->left;
-		temp->parent = node->parent; /* при этом, возможно, temp становится корнем дерева */
-		if (node->parent != NULL) {
-			if (node->parent->left == node)
-				node->parent->left = temp;
-			else
-				node->parent->right = temp;
-		}
-		node->left = temp->right;
-		if (temp->right != NULL)
-			temp->right->parent = node;
-		node->parent = temp;
-		temp->right = node;
-	}
+	
 
-	void replace(RBNode* node, RBNode* child) {
-		child->parent = node->parent;
-		if (node == node->parent->left) {
-			node->parent->left = child;
-		}
-		else {
-			node->parent->right = child;
-		}
-	}
 
-	void remove(KeyData key, Data val) {
 
-	}
-
-	// TODO: fix
 	it insert(KeyData key, Data val)
 	{
-		RBNode* temp = new RBNode(val, key,colors::red);
+		
 
-		TreeNode* tmp = Binary_Tree::insert(key, val);
-		RBNode* ans = new RBNode(tmp);
-		//ans->color = colors::red;
-		//
-		//if (check_out_ins(ans))
-		//	return ans;
-		//
+		auto tmp = Binary_Tree::insert(key, val);
+		
+		tmp->color = red;
+
+		print();
+		if (check_out_ins(tmp))
+			return tmp;
+		
 		return NULL;
 		
 		
 	}
 
-	bool check_out_ins(it node)
+	
+	bool remove(KeyData key, Data val)
 	{
-		if (node == start_root)
-		{
-			temp->color = colors::black;
-			return true;
-		}
-		while (node->parent->color == colors::red)
-		{
-			auto ded = grandparent(node);
-			auto papa = node->parent;
-			if (papa == ded->left)
-			{
-				auto un = Uncle(node);
-				if (un->color == colors::red)
-				{
-					papa->color = black;
-					un->color = black;
-					ded->color = red;
-					node = ded;
-				}
-				else
-				{
-					if (node = node->parent->right)
-					{
-						node = papa;
-						rotate_left(node);
-					}
-					ded = grandparent(node);
-					papa = node->parent;
-					parent->color = black;
-					ded->color = red;
-					rotate_right(ded);
+		TreeNode* temp = Binary_Tree::search(key);
+
+		if (!(temp == NULL)) {
+			for (int i = 0; i < stack.size(); i++) {
+				if (stack[i] == temp) {
+					stack.erase(stack.begin() + i);
+					break;
 				}
 			}
-			else
-			{
-				auto un = Uncle(node);
-				if (un != NULL)
-				{
-					if (un->color == red)
-					{
-						papa->color = black;
-						un->color = black;
-						ded->color = red;
-						node = ded;
+
+			//left net right da
+			if (temp->left == NULL && temp->right != NULL) {
+				if (temp != start_root) {
+					TreeNode* save = temp;
+					colors color = save->color;
+					temp = temp->top;
+
+					if (save == temp->left) {
+						save = save->right;
+						temp->left = save;
 					}
+					else {
+						save = save->right;
+						temp->right = save;
+					}
+					save->top = temp;
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
+					if (color ==black)
+						check_out_delete(save);
 				}
 				else
 				{
-					if (node == papa->left)
-					{
-						node = node->parent;
-						rotate_right(node);
+					start_root = temp->right; start_root->top = NULL; check_out_delete(start_root);
+				}
+					
+			}
+			//left da right net
+			else if (temp->left != NULL && temp->right == NULL) {
+				if (start_root != temp) {
+					TreeNode* save = temp;
+					auto color = save->color;
+					temp = temp->top;
+
+					if (save == temp->left) {
+						save = save->left;
+						temp->left = save;
 					}
-					papa->color = black;
-					ded->color = red;
-					rotate_left(ded);
+					else {
+						save = save->left;
+						temp->right = save;
+					}
+					save->top = temp;
+					
+					temp = back_to_root(temp, start_root);
+					start_root = temp;
+					if (color ==black)
+						check_out_delete(save);
+				}
+				else
+				{
+					start_root = temp->left;
+					start_root->top = NULL;
+					check_out_delete(start_root);
+				}
+			}
+			//leaf
+			else if (temp->left == NULL && temp->right == NULL) {
+				if (temp != start_root) {
+					auto save = temp->top;
+					if (save->left == temp) {
+						save->left = NULL;
+						temp->top = NULL;
+					}
+					else {
+						save->right = NULL;
+						temp->top = NULL;
+					}
+					save = back_to_root(save, start_root);
+					start_root = save;
+				}
+				else {
+					start_root = NULL;
+					flag_not_null++;
 				}
 				
 			}
 
+			else if (temp->left != NULL && temp->right != NULL)
+			{
+				auto save = temp;
+				auto color = temp->color;
+				auto s_left = temp->left;
+				auto s_right = temp->right;
+				temp = temp->right;
+				bool flag = false;
+
+				while (!flag) {
+					if (temp->left == NULL)
+						flag++;
+					else
+						temp = temp->left;
+				}
+				//temp = min sprava ->set this branch
+				auto min_r_branch = temp;
+
+				//create brand new node to build evrth
+				TreeNode* blank = new TreeNode(min_r_branch->key, min_r_branch->value);
+				blank->visited = min_r_branch->visited;
+				blank->color = min_r_branch->color;
+
+				/*if (min_r_branch != s_right)
+				{
+					if (min_r_branch->right != NULL)
+					{
+						auto baza = min_r_branch->right;
+						baza->top = min_r_branch->top;
+						min_r_branch->top->left = baza;
+					}
+					else
+					{
+						min_r_branck->top->left = NULL;
+					}
+				}*/
+				remove(min_r_branch->key, min_r_branch->value);
+
+				blank->left = s_left;
+				s_left->top = blank;
+
+				blank->right = s_right;
+				s_right->top = blank;
+
+				if (save != start_root) {
+					auto s_top = save->top;
+					if (s_top->left == save) {
+						s_top->left = blank;
+						blank->top = s_top;
+					}
+					else {
+						s_top->right = blank;
+						blank->top = s_top;
+					}
+					s_top = back_to_root(s_top, start_root);
+					start_root = s_top;
+				}
+				else 
+					start_root = blank; 
+				if (color == black)
+					check_out_delete(blank);
+			}
+
+			stack.clear();
+			stack.shrink_to_fit();
+			remaster_stack(start_root);
+			return true;
 		}
-		start_root->color = black;
-		return true;
+		return false;
 	}
+
+
+	it search(KeyData key)
+	{
+		return Binary_Tree::search(key);
+	}
+	
 };

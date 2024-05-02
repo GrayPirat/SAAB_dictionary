@@ -1,6 +1,8 @@
 #include "dictionary_head.h"
-#include < algorithm >
-#include <random> 
+#include<algorithm>
+#include<random>
+#include<iostream>
+#include<chrono>
 using namespace std;
 
 COORD position, newPosition;

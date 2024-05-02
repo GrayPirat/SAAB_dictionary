@@ -557,16 +557,20 @@ public:
 					if (save == temp->left) {
 						save = save->right;
 						temp->left = save;
+						//temp = temp->left;
 					}
 					else {
 						save = save->right;
 						temp->right = save;
+						//temp = temp->right;
 					}
+
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
 					start_root = temp;
 				}
-				else start_root = temp->right;
+				else
+					start_root = temp->right;
 			}
 			//left da right net
 			else if (temp->left != NULL && temp->right == NULL) {
@@ -577,10 +581,12 @@ public:
 					if (save == temp->left) {
 						save = save->left;
 						temp->left = save;
+						//temp = temp->left;
 					}
 					else {
 						save = save->left;
 						temp->right = save;
+						//temp=temp->right;
 					}
 					save->top = temp;
 					temp = back_to_root(temp, start_root);
@@ -851,7 +857,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		return h_r - h_l;
 	}
 
-	it SmallRotateRight(TreeNode* p) { // правый поворот вокруг p
+	it SmallRotateRight(TreeNode* p) { // ГЇГ°Г ГўГ»Г© ГЇГ®ГўГ®Г°Г®ГІ ГўГ®ГЄГ°ГіГЈ p
 		auto q = p->left;
 		p->left = q->right;
 		if (p->left != NULL)
@@ -859,12 +865,11 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		q->right = p;
 		q->top = p->top;
 		p->top = q;
-		
 
 		return q;
 	}
 
-	it SmallRotateLeft(TreeNode* q) { // левый поворот вокруг q
+	it SmallRotateLeft(TreeNode* q) { // Г«ГҐГўГ»Г© ГЇГ®ГўГ®Г°Г®ГІ ГўГ®ГЄГ°ГіГЈ q
 		auto p = q->right;
 		q->right = p->left;
 		if (q->right != NULL)
@@ -872,11 +877,10 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		p->left = q;
 		p->top = q->top;
 		q->top = p;
-
 		return p;
 	}
 
-	void balance(TreeNode* p) // балансировка узла p
+	void balance(TreeNode* p) // ГЎГ Г«Г Г­Г±ГЁГ°Г®ГўГЄГ  ГіГ§Г«Г  p
 	{
 		auto save = p;
 		if (bfactor(p) == 2)
@@ -942,8 +946,8 @@ public:
 		auto ans = Binary_Tree::insert(key, val);
 		set_height(start_root);
 
-		balance(start_root);
 
+		balance(start_root);
 		return ans;
 	}
 
@@ -967,7 +971,7 @@ class RB_Tree : protected Binary_Tree<KeyData, Data> {
 private:
 	
 
-	it SmallRotateRight(TreeNode* p) { // правый поворот вокруг p
+	it SmallRotateRight(TreeNode* p) { // РїСЂР°РІС‹Р№ РїРѕРІРѕСЂРѕС‚ РІРѕРєСЂСѓРі p
 		auto save =p;
 		bool flag_start_root = save == start_root ? true: false;
 		
@@ -1012,7 +1016,7 @@ private:
 		return q;
 	}
 	
-	it SmallRotateLeft(TreeNode* q) { // левый поворот вокруг q
+	it SmallRotateLeft(TreeNode* q) { // Р»РµРІС‹Р№ РїРѕРІРѕСЂРѕС‚ РІРѕРєСЂСѓРі q
 		auto save =q;
 		bool flag_start_root = save == start_root ? true : false;
 		auto p = q->right;

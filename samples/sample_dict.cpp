@@ -32,19 +32,74 @@ int main()
     for (int i = 0; i < 1000; i++) {
         vec.push_back(vec.size());
     }
-    /*shuffle(vec.begin(), vec.end(), mt19937(random_device()()));*/
-    for (int i = 0; i < 10; i++) {
+    shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+    for (int i = 0; i <1000; i++) {
         auto temp = vec[i];
         a.insert(temp, temp);
-        a.print();
+
     }
+    /*a.insert(0, 0);
+    a.print();
+    a.insert(4,4);
+    a.print();
+    a.insert(3,3);
+    a.print();
+    a.insert(6,6);
+    a.print();
+    a.insert(9, 9);
+    a.print();
+    a.insert(1,1);
+    a.print();
+    a.insert(7,7);
+    a.print();
+    a.insert(5,5);
+    a.print();
+    a.insert(8,8);
+    a.print();
+    a.insert(2,2);
+    
+    
+    
     
 
-    for (int i = 6; i > 0; i--) {
-        auto temp = vec[i];
-        a.print();
-        a.remove(temp, temp);
-    }
-    a.insert(5, 5);
+    
+    
+    
+    
+
+    a.print();;
+
+    a.remove(0, 0);
     a.print();
+    a.remove(4, 4);
+    a.print();
+    a.remove(3, 3);
+    a.print();
+    a.remove(6, 6);
+    a.print();
+    a.remove(9, 9);
+    a.print();
+    a.remove(1, 1);
+    a.print();
+    a.remove(7, 7);
+    a.print();
+    a.remove(5, 5);
+    a.print();
+    a.remove(8, 8);
+    a.print();
+    a.remove(2, 2);*/
+
+    for (int i = 0; i <1000; i++) {
+        auto temp = vec[i];
+       
+        if (a.remove(temp, temp) == false)
+        {
+            return -1;
+        }
+        
+
+    }
+   
+    
+
 }

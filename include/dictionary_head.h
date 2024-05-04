@@ -1122,138 +1122,7 @@ private:
 		}
 	}
 
-	void check_out_delete(TreeNode* p)
-	{
-		while (p->color == black && p->top != NULL)
-		{
-			if (p->top != NULL)
-			{
-				auto  papa = p->top;
-				if (papa->left == p)
-				{
-					if (papa->right != NULL)
-					{
-						if (papa->right->color == red)
-						{
-							papa->right->color = black;
-							papa->color = red;
-							SmallRotateLeft(papa);
-							break;
-						}
-						bool flag = false;
-						if (papa->right->right != NULL || papa->right->left != NULL)
-						{
-							if (papa->right->right != NULL && papa->right->left != NULL)
-							{
-								if (papa->right->right->color == black && papa->right->left->color == black)
-								{
-									papa->right->color = red;
-								}
-								else
-								{
-									if (papa->right->right->color == black)
-									{
-										papa->right->left->color == black;
-										papa->right->color = red;
-										SmallRotateRight(papa->right);
-									}
-									papa->right->color = papa->color;
-									papa->color = black;
-									papa->right->right->color = black;
-									SmallRotateLeft(papa);
-									p = start_root;
-								}
-								
-
-							}//eto tol`ko vse != null to do if ==
-							else
-							{
-								if (papa->right->right != NULL)
-								{
-									if (papa->right->right->color == black)
-									{
-										papa->right->left->color == black;
-										papa->right->color = red;
-										SmallRotateRight(papa->right);
-									}
-									papa->right->color = papa->color;
-									papa->color = black;
-									papa->right->right->color = black;
-									SmallRotateLeft(papa);
-									p = start_root;
-								}
-							}
-						}
-						
-
-					}
-				}
-				else if (papa->right = p)
-				{
-					if (papa->left != NULL)
-					{
-						if (papa->left->color == red)
-						{
-							papa->left->color = black;
-							papa->color = red;
-							SmallRotateRight(papa);
-							break;
-						}
-						bool flag = false;
-						if (papa->left->right != NULL || papa->left->left != NULL)
-						{
-							if (papa->left->right != NULL && papa->left->left != NULL)
-							{
-								if (papa->left->right->color == black && papa->left->left->color == black)
-								{
-									papa->left->color = red;
-								}
-								else
-								{
-									if (papa->left->right->color == black)
-									{
-										papa->left->left->color == black;
-										papa->left->color = red;
-										SmallRotateLeft(papa->left);
-									}
-									papa->left->color = papa->color;
-									papa->color = black;
-									papa->left->right->color = black;
-									SmallRotateRight(papa);
-									p = start_root;
-								}
-
-
-							}//eto tol`ko vse != null to do if ==
-							else
-							{
-								if (papa->left->right != NULL)
-								{
-									if (papa->left->right->color == black)
-									{
-										papa->left->left->color == black;
-										papa->left->color = red;
-										SmallRotateLeft(papa->left);
-									}
-									papa->left->color = papa->color;
-									papa->color = black;
-									papa->left->right->color = black;
-									SmallRotateRight(papa);
-									p = start_root;
-								}
-							}
-						}
-
-
-					}
-				}
-
-			}
-
-		}
-		p->color = black;
-		start_root->color = black;
-	};
+	
 
 	bool check_out_ins(it node)
 	{
@@ -1266,98 +1135,88 @@ private:
 		{
 			if (node->top->color == red)
 			{
-				auto ded = grandparent(node);
-				if (ded != NULL)
+				auto un = Uncle(node);
+					
+				if (node->top == node->top->top->left)
 				{
-					auto papa = node->top;
-					if (papa == ded->left)
+						
+					if (un != NULL)
 					{
-						auto un = Uncle(node);
-						if (un != NULL)
+						if (un->color == colors::red)
 						{
-							if (un->color == colors::red)
-							{
-								papa->color = black;
-								un->color = black;
-								ded->color = red;
-								node = ded;
+							node->top->color = black;
+							un->color = black;
+							node->top->top->color = red;
+							node = node->top->top;
 
-							}
-							else
-							{
-								if (node == node->top->right)
-								{
-									node = papa;
-									SmallRotateLeft(node);
-								}
-								ded = grandparent(node);
-								papa = node->top;
-								papa->color = black;
-								ded->color = red;
-								SmallRotateRight(ded);
-							}
 						}
 						else
 						{
 							if (node == node->top->right)
 							{
-								node = papa;
+								node = node->top;
 								SmallRotateLeft(node);
 							}
-							ded = grandparent(node);
-							papa = node->top;
-							papa->color = black;
-							ded->color = red;
-							SmallRotateRight(ded);
+							node->top->color = black;
+							node->top->top->color = red;
+							SmallRotateRight(node->top->top);
 						}
-
 					}
 					else
 					{
-						auto un = Uncle(node);
-						if (un != NULL)
+						if (node == node->top->right)
 						{
-							if (un->color == red)
-							{
-								papa->color = black;
-								un->color = black;
-								ded->color = red;
-								node = ded;
-								if (node->top == NULL)
-									break;
-							}
-							else
-							{
-								if (node == papa->left)
-								{
-									node = node->top;
-									SmallRotateRight(node);
+							node = node->top;
+							SmallRotateLeft(node);
+						}
+						node->top->color = black;
+						node->top->top->color = red;
+						SmallRotateRight(node->top->top);
+					}
 
-								}
-								papa->color = black;
-								ded->color = red;
-								SmallRotateLeft(ded);
-
-							}
+				}
+				else
+				{
+					
+					if (un != NULL)
+					{
+						if (un->color == red)
+						{
+							node->top->color = black;
+							un->color = black;
+							node->top->top->color = red;
+							node = node->top->top;
 						}
 						else
 						{
-							if (node == papa->left)
+							if (node == node->top->left)
 							{
 								node = node->top;
 								SmallRotateRight(node);
+
 							}
-							papa->color = black;
-							ded->color = red;
-							SmallRotateLeft(ded);
+							node->top->color = black;
+							node->top->top->color = red;
+							SmallRotateLeft(node->top->top);
+
 						}
-
-
-
 					}
+					else
+					{
+						if (node == node->top->left)
+						{
+							node = node->top;
+							SmallRotateRight(node);
+						}
+						node->top->color = black;
+						node->top->top->color = red;
+						SmallRotateLeft(node->top->top);
+					}
+
+
+
 				}
-				else
-					node = node->top;
+				
 			}
 			else
 				break;
@@ -1404,7 +1263,6 @@ public:
 		
 		tmp->color = red;
 
-		print();
 		if (check_out_ins(tmp))
 			return tmp;
 		
@@ -1413,180 +1271,499 @@ public:
 		
 	}
 
-	
-	bool remove_inner(KeyData key, Data val,bool flag)
+	void check_out_delete(TreeNode* p)
 	{
-		TreeNode* temp = Binary_Tree::search(key);
 
-		if (!(temp == NULL) && flag) {
+		while (p->color == black && p->top != NULL)
+		{
+			auto  papa = p->top;
+			if (papa->left == p)
+			{
+				if (papa->right != NULL)
+				{
+					auto brat = papa->right;
+					if (brat->color == red)
+					{
+						brat->color = black;
+						papa->color = red;
+						SmallRotateLeft(papa);
+
+						brat = p->top->right;
+					}
+					bool flag_cr_left=false;
+					bool flag_cr_right=false;
+					if (brat->left == NULL)
+					{
+						brat->left = new TreeNode();
+						brat->left->top = brat;
+						brat->left->color = black;
+						flag_cr_left = true;
+					}
+					if (brat->right == NULL)
+					{
+						brat->right = new TreeNode();
+						brat->right->top = brat;
+						brat->right->color = black;
+						flag_cr_right = true;
+					}
+					if (brat->left->color == black && brat->right->color == black)
+					{
+						brat->color = red;
+						p = papa;
+						if (flag_cr_left)
+						{
+							brat->left->top = NULL; brat->left = NULL;
+						}
+						if (flag_cr_right)
+						{
+							brat->right->top = NULL; brat->right = NULL;
+						}
+					}
+					else
+					{
+						if (brat->right->color == black)
+						{
+							brat->color = red;
+							brat->left->color = black;
+							SmallRotateRight(brat);
+							if (flag_cr_right)
+							{
+
+								brat->right->top = NULL; brat->right = NULL;
+							}
+							brat = p->top->right;
+						}
+						brat->color = papa->color;
+						papa->color = black;
+						brat->right->color = black;
+
+						if (flag_cr_left)
+						{
+							brat->left->top = NULL; brat->left = NULL;
+						}
+						
+						SmallRotateLeft(papa);
+
+						
+						p = start_root;
+					}
+
+
+					
+				}
+			}
+			else if (papa->right = p)
+			{
+				if (papa->left != NULL)
+				{
+					auto brat = papa->left;
+					if (brat->color == red)
+					{
+						brat->color = black;
+						papa->color = red;
+						SmallRotateRight(papa);
+						brat = p->top->left;
+					}
+
+					bool flag_cr_left = false;
+					bool flag_cr_right = false;
+					if (brat->left == NULL)
+					{
+						brat->left = new TreeNode();
+						brat->left->top = brat;
+						brat->left->color = black;
+						flag_cr_left = true;
+					}
+					if (brat->right == NULL)
+					{
+						brat->right = new TreeNode();
+						brat->right->top = brat;
+						brat->right->color = black;
+						flag_cr_right = true;
+					} /// continue made brats gotta check out
+					
+					if (brat->right->color == black && brat->left->color == black)
+					{
+						brat->color = red;
+						p = papa;
+						if (flag_cr_left)
+						{
+							brat->left->top = NULL; brat->left = NULL;
+						}
+						if (flag_cr_right)
+						{
+							brat->right->top = NULL; brat->right = NULL;
+						}
+					}
+					else
+					{
+						if (brat->left->color == black)
+						{
+							brat->right->color = black;
+							brat->color = red;
+							SmallRotateLeft(brat);
+							if (flag_cr_left)
+							{
+								brat->left->top = NULL; brat->left = NULL;
+							}
+							brat = p->top->left;
+						}
+						brat->color = papa->color;
+						papa->color = black;
+						brat->left->color = black;
+
+						if (flag_cr_right)
+						{
+							brat->right->top = NULL; brat->right = NULL;
+						}
+						SmallRotateRight(papa);
+
+						p = start_root;
+					}
+				}
+			}
+		}
+		p->color = black;
+
+	};
+
+	void link_nodes(TreeNode* u, TreeNode* v) {
+		if (u->top == NULL) {
+			start_root = v;
+		}
+		else if (u == u->top->left) {
+			u->top->left = v;
+		}
+		else {
+			u->top->right = v;
+		}
+		v->top = u->top;
+	}
+	bool remove_inner(KeyData key, Data val)
+	{
+		TreeNode* z = Binary_Tree::search(key);
+
+		if (!(z == NULL)) {
 			for (int i = 0; i < stack.size(); i++) {
-				if (stack[i] == temp) {
+				if (stack[i] == z) {
 					stack.erase(stack.begin() + i);
 					break;
 				}
 			}
+		}
+		if (!(z == NULL)) //enter the alg
+		{
 
-			//left net right da
-			if (temp->left == NULL && temp->right != NULL) {
-				if (temp != start_root) {
-					TreeNode* save = temp;
-					colors color = save->color;
-					temp = temp->top;
-
-					if (save == temp->left) {
-						save = save->right;
-						temp->left = save;
-					}
-					else {
-						save = save->right;
-						temp->right = save;
-					}
-					save->top = temp;
-					temp = back_to_root(temp, start_root);
-					start_root = temp;
-					if (color ==black && flag)
-						check_out_delete(save);
+			TreeNode* x;
+			auto y = z;
+			int y_original_color = y->color;
+			
+			if (z->left == NULL) { //leaf && left net right da
+				if (z == start_root && z->left ==NULL && z->right ==NULL)
+				{
+					start_root = new TreeNode();
+					flag_not_null=false;
+					return true;
 				}
 				else
 				{
-					start_root = temp->right;
-					start_root->top = NULL;
-					if (flag)
+					TreeNode* temp1 = NULL;
+					if (z->right == NULL)
 					{
-						bool flag_right = start_root->right != NULL ? 1 : 0;
-						if (flag_right)
-							check_out_delete(start_root->right);
+						z->right = new TreeNode();
+						z->right->top = z;
+						temp1 = z->right;
 					}
-						
-				}
-					
-			}
-			//left da right net
-			else if (temp->left != NULL && temp->right == NULL) {
-				if (start_root != temp) {
-					TreeNode* save = temp;
-					auto color = save->color;
-					temp = temp->top;
+					x = z->right;
+					link_nodes(z, z->right);
+					delete z;
 
-					if (save == temp->left) {
-						save = save->left;
-						temp->left = save;
+					if (y_original_color == black) {
+						check_out_delete(x);
 					}
-					else {
-						save = save->left;
-						temp->right = save;
-					}
-					save->top = temp;
-					
-					temp = back_to_root(temp, start_root);
-					start_root = temp;
-					if (color ==black && flag)
-						check_out_delete(save);
-				}
-				else
-				{
-					start_root = temp->left;
-					start_root->top = NULL;
-					if (flag)
+					if (temp1 != NULL)
 					{
-						bool flag_left = start_root->left != NULL ? 1 : 0;
-						if (flag_left)
-							check_out_delete(start_root->left);
+						if (temp1->top->left == temp1)
+							temp1->top->left = NULL;
+						else
+							temp1->top->right = NULL;
+						temp1 = NULL;
 					}
-						
-				}
-			}
-			//leaf
-			else if (temp->left == NULL && temp->right == NULL) {
-				if (temp != start_root) {
-					auto save = temp->top;
-					if (save->left == temp) {
-						save->left = NULL;
-						temp->top = NULL;
-					}
-					else {
-						save->right = NULL;
-						temp->top = NULL;
-					}
-
-					save = back_to_root(save, start_root);
-					start_root = save;
-				}
-				else {
-					start_root = NULL;
-					flag_not_null++;
 				}
 				
 			}
-
-			else if (temp->left != NULL && temp->right != NULL)
+			else if (z->right == NULL) // left da right net
 			{
-				auto save = temp;
-				auto color = temp->color;
-				auto s_left = temp->left;
-				auto s_right = temp->right;
-				temp = temp->right;
+				TreeNode* temp3 = NULL;
+				if (z->left == NULL)
+				{
+					z->left = new TreeNode();
+					z->left->top = z;
+					temp3 = z->left;
+				}
+				x = z->left;
+				link_nodes(z, z->left);
+
+				delete z;
+				if (y_original_color == black) {
+					check_out_delete(x);
+				}
+				if (temp3 != NULL)
+				{
+					if (temp3->top->left == temp3)
+						temp3->top->left = NULL;
+					else
+						temp3->top->right = NULL;
+					temp3 = NULL;
+				}
+				
+			}
+			else {
+				auto min_r_branch = y->right;
 				bool flag = false;
 
 				while (!flag) {
-					if (temp->left == NULL)
+					if (min_r_branch->left == NULL)
 						flag++;
 					else
-						temp = temp->left;
+						min_r_branch = min_r_branch->left;
 				}
-				//temp = min sprava ->set this branch
-				auto min_r_branch = temp;
+				y = min_r_branch;
+				y_original_color = y->color;
 
-				//create brand new node to build evrth
-				TreeNode* blank = new TreeNode(min_r_branch->key, min_r_branch->value);
-				blank->visited = min_r_branch->visited;
-				blank->color = min_r_branch->color;
-
-				
-				remove_inner(min_r_branch->key, min_r_branch->value,0);
-				s_right = temp->right;
-				
-				blank->left = s_left;
-				s_left->top = blank;
-
-				blank->right = s_right;
-				s_right->top = blank;
-
-				if (save != start_root) {
-					auto s_top = save->top;
-					if (s_top->left == save) 
-					{
-						s_top->left = blank;
-						blank->top = s_top;
-					}
-					else {
-						s_top->right = blank;
-						blank->top = s_top;
-					}
-					s_top = back_to_root(s_top, start_root);
-					start_root = s_top;
-				}
-				else 
-					start_root = blank; 
-				if (color == black && flag)
+				TreeNode* temp2=NULL;
+				if (y->right == NULL)
 				{
-					print();
-					check_out_delete(blank);
+					y->right = new TreeNode(); 
+					y->right->top = y; 
+					temp2 = y->right;
 				}
-					
-			}
+				x = y->right;
+				if (y->top == z) {
+					x->top = y;
+				}
+				else {
+					link_nodes(y, y->right);
+					y->right = z->right;
+					y->right->top = y;
+				}
 
-			stack.clear();
-			stack.shrink_to_fit();
-			remaster_stack(start_root);
+				link_nodes(z, y);
+				
+				y->left = z->left;
+				y->left->top = y;
+				y->color = z->color;
+				
+				delete z;
+				if (y_original_color == black) {
+					check_out_delete(x);
+				}
+				if (temp2 != NULL)
+				{
+					if (temp2->top->left == temp2)
+						temp2->top->left = NULL;
+					else
+						temp2->top->right = NULL;
+					temp2 = NULL;
+				}
+			}
+			
 			return true;
+			
+			
+			//left net right da
+			//if (temp->left == NULL && temp->right != NULL) {
+			//	if (temp != start_root) {
+			//		TreeNode* save = temp;
+			//		temp = temp->top;
+			//		if (save == temp->left) {
+			//			save = save->right;
+			//			temp->left = save;
+			//		}
+			//		else {
+			//			save = save->right;
+			//			temp->right = save;
+			//		}
+			//		save->top = temp;
+			//		temp = back_to_root(temp, start_root);
+			//		start_root = temp;
+			//		if (color ==black && flag)
+			//			check_out_delete(save);
+			//	}
+			//	else
+			//	{
+			//		start_root = temp->right;
+			//		start_root->top = NULL;
+			//		if (flag)
+			//		{
+			//			bool flag_right = start_root->right != NULL ? 1 : 0;
+			//			if (flag_right)
+			//				check_out_delete(start_root->right);
+			//		}
+			//			
+			//	}
+			//		
+			//}
+			////left da right net
+			//else if (temp->left != NULL && temp->right == NULL) {
+			//	if (start_root != temp) {
+			//		TreeNode* save = temp;
+			//		auto color = save->color;
+			//		temp = temp->top;
+			//		if (save == temp->left) {
+			//			save = save->left;
+			//			temp->left = save;
+			//		}
+			//		else {
+			//			save = save->left;
+			//			temp->right = save;
+			//		}
+			//		save->top = temp;
+			//		
+			//		temp = back_to_root(temp, start_root);
+			//		start_root = temp;
+			//		if (color ==black && flag)
+			//			check_out_delete(save);
+			//	}
+			//	else
+			//	{
+			//		start_root = temp->left;
+			//		start_root->top = NULL;
+			//		if (flag)
+			//		{
+			//			bool flag_left = start_root->left != NULL ? 1 : 0;
+			//			if (flag_left)
+			//				check_out_delete(start_root->left);
+			//		}
+			//			
+			//	}
+			//}
+			////leaf
+			//else if (temp->left == NULL && temp->right == NULL) {
+			//	if (temp != start_root) {
+			//		auto save = temp->top;
+			//		bool flag_left = (temp == temp->top->left) ? true : false;
+			//		colors color = temp->color;
+			//		if (save->left == temp) {
+			//			save->left = NULL;
+			//			temp->top = NULL;
+			//		}
+			//		else {
+			//			save->right = NULL;
+			//			temp->top = NULL;
+			//		}
+			//		auto save_save = save;
+			//		save = back_to_root(save, start_root);
+			//		start_root = save;
+			//		
+			//		if (color ==black)
+			//		{
+			//			if (flag_left)
+			//			{
+			//				save_save->left = new TreeNode();
+			//				save_save->left->color = black;
+			//				save_save->left->top = save_save;
+			//				if (flag)
+			//					check_out_delete(save_save->left);
+			//				save_save->left = NULL;
+			//			}
+			//			else
+			//			{
+			//				save_save->right = new TreeNode();
+			//				save_save->right->top = save_save;
+			//				save_save->right->color = black;
+			//				if (flag)
+			//					check_out_delete(save_save->right);
+			//				save_save->right = NULL;
+			//			}
+			//		}
+			//	}
+			//	else {
+			//		start_root = NULL;
+			//		flag_not_null++;
+			//	}
+			//}
+			////vse
+			//else if (temp->left != NULL && temp->right != NULL)
+			//{
+			//	auto save = temp;
+			//	auto color = temp->color;
+			//	auto s_left = temp->left;
+			//	auto s_right = temp->right;
+			//	temp = temp->right;
+			//	bool flag = false;
+			//	while (!flag) {
+			//		if (temp->left == NULL)
+			//			flag++;
+			//		else
+			//			temp = temp->left;
+			//	}
+			//	bool falg_min_r_save = false;
+			//	//temp = min sprava ->set this branch
+			//	auto min_r_branch = temp;
+			//	auto min_r_save = min_r_branch->right;
+			//	if (min_r_save == NULL)
+			//	{
+			//		min_r_save = new TreeNode();
+			//		min_r_save->color = black;
+			//		min_r_save->top = min_r_branch;
+			//		falg_min_r_save = true;
+			//	}
+			//	if (min_r_branch->top == save) {
+			//		min_r_save->top = min_r_branch;
+			//	}
+			//	//create brand new node to build evrth
+			//	TreeNode* blank = new TreeNode(min_r_branch->key, min_r_branch->value);
+			//	blank->visited = min_r_branch->visited;
+			//	blank->color = min_r_branch->color;
+			//	remove_inner(min_r_branch->key, min_r_branch->value,0);
+			//	blank->left = s_left;
+			//	s_left->top = blank;
+			//	blank->right = s_right;
+			//	if (s_right!=NULL)
+			//		s_right->top = blank;
+			//	if (save != start_root) {
+			//		auto s_top = save->top;
+			//		if (s_top->left == save) 
+			//		{
+			//			s_top->left = blank;
+			//			blank->top = s_top;
+			//		}
+			//		else {
+			//			s_top->right = blank;
+			//			blank->top = s_top;
+			//		}
+			//		s_top = back_to_root(s_top, start_root);
+			//		start_root = s_top;
+			//	}
+			//	else 
+			//		start_root = blank; print();
+			//	if (color == black && flag)
+			//	{
+			//		print();
+			//		check_out_delete(min_r_save);
+			//	}
+			//	if (falg_min_r_save)
+			//	{
+			//		if (min_r_save->top->left == min_r_save)
+			//			min_r_save->top->left = NULL;
+			//		else
+			//			min_r_save->top->right = NULL;
+			//	}
+			// 
+			//}
+			//stack.clear();
+			//stack.shrink_to_fit();
+			//remaster_stack(start_root);
+			//return true;
+
 		}
 		return false;
 	}
 
-	bool remove(KeyData key, Data val, bool flag = true)
+	bool remove(KeyData key, Data val)
 	{
-		return (remove_inner(key, val, flag));
+		return (remove_inner(key, val));
 	}
 
 	it search(KeyData key)

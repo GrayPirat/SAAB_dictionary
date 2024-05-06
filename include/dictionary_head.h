@@ -970,13 +970,13 @@ template<class KeyData, class Data>
 class RB_Tree : protected Binary_Tree<KeyData, Data> {
 private:
 	
+	int blacks;
 
 	it SmallRotateRight(TreeNode* p) { // правый поворот вокруг p
 		auto save =p;
 		bool flag_start_root = save == start_root ? true: false;
 		
 		auto q = p->left;
-		
 
 		if (flag_start_root == false)
 		{
@@ -989,7 +989,6 @@ private:
 				q->top = p->top;
 				p->top->left = q;
 				p->top = q;
-
 			}
 			else
 			{
@@ -1238,8 +1237,39 @@ public:
 		flag_not_null = true;
 	}
 	
+	void skolko_negrov(int& blacks, int& mx_blacks, bool& rez) {
+		height_black(start_root, blacks, mx_blacks, rez);
+	}
 
-	
+	void height_black(TreeNode* node, int& blacks, int& mx_blacks, bool& rez) {
+		if (node->color == 1) {
+			blacks++;
+		}
+		int loc_black = blacks;
+		if (node->left != NULL)
+			if (node->right != NULL) {
+				loc_black = blacks;
+				height_black(node->right, loc_black, mx_blacks, rez);
+				loc_black = blacks;
+				height_black(node->left, loc_black, mx_blacks, rez);
+			}
+			else {
+				loc_black = blacks;
+				height_black(node->left, loc_black, mx_blacks, rez);
+			}
+		else
+			if (node->right != NULL) {
+				loc_black = blacks;
+				height_black(node->right, loc_black, mx_blacks, rez);
+			}
+			else
+				if (mx_blacks == -1)
+					mx_blacks = blacks;
+				else
+					if (mx_blacks != blacks)
+						rez = false;
+					else rez = true;
+	}
 	
 	void print() {
 		system("cls");
@@ -1251,24 +1281,13 @@ public:
 		SetConsoleCursorPosition(hConsole, position);
 	}
 
-	
-
-
-
 	it insert(KeyData key, Data val)
 	{
-		
-
 		auto tmp = Binary_Tree::insert(key, val);
-		
 		tmp->color = red;
-
-		if (check_out_ins(tmp))
-			return tmp;
-		
+		/*if (check_out_ins(tmp))
+			return tmp;*/
 		return NULL;
-		
-		
 	}
 
 	void check_out_delete(TreeNode* p)

@@ -2,9 +2,6 @@
 #include <gtest.h>
 #include "dictionary_head.h"
 
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
 
 TEST(AVL_Tree, AVL_can_insert1000) {
 	AVL_Tree<int, int> a;

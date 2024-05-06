@@ -708,11 +708,11 @@ public:
 						TreeNode* ans = new TreeNode(key,val);
 						ans->top = temp;
 						temp->left = ans;
-						temp = back_to_root(temp, start_root);
-						start_root = temp;
-						stack.clear();
+						
+						/*start_root = temp;*/
+						/*stack.clear();
 						stack.shrink_to_fit();
-						remaster_stack(start_root);
+						remaster_stack(start_root);*/
 						return ans;
 					}
 				}
@@ -724,11 +724,11 @@ public:
 						TreeNode* ans = new TreeNode(key,val);
 						ans->top = temp;
 						temp->right = ans;
-						temp = back_to_root(temp, start_root);
-						start_root = temp;
-						stack.clear();
+						/*temp = back_to_root(temp, start_root);*/
+						/*start_root = temp;*/
+						/*stack.clear();
 						stack.shrink_to_fit();
-						/*remaster_stack(start_root);*/
+						remaster_stack(start_root);*/
 						return ans;
 					}
 				}
@@ -738,9 +738,9 @@ public:
 			start_root->value = val;
 			start_root->key = key;
 			flag_not_null = true;
-			stack.clear();
+			/*stack.clear();
 			stack.shrink_to_fit();
-			/*remaster_stack(start_root);*/
+			remaster_stack(start_root);*/
 			return temp;
 		}
 	}

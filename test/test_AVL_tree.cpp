@@ -2,9 +2,6 @@
 #include <gtest.h>
 #include "dictionary_head.h"
 
-COORD position, newPosition;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-int x = 0, y = 0;
 
 TEST(AVL_Tree, AVL_can_insert1000) {
 	AVL_Tree<int, int> a;
@@ -20,6 +17,42 @@ TEST(AVL_Tree, AVL_can_insert1000) {
 	}
 	//a.print();
 	for (int i = 0; i < 1000; i++) {
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
+	}
+}
+
+TEST(AVL_Tree, AVL_can_insert4000) {
+	AVL_Tree<int, int> a;
+	vector<int> vec;
+
+	for (int i = 0; i < 4000; i++) {
+		vec.push_back(vec.size());
+	}
+	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+	for (int i = 0; i < 4000; i++) {
+		auto temp = vec[i];
+		a.insert(temp, temp);
+	}
+	//a.print();
+	for (int i = 0; i < 4000; i++) {
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
+	}
+}
+
+TEST(AVL_Tree, AVL_can_insert16000) {
+	AVL_Tree<int, int> a;
+	vector<int> vec;
+
+	for (int i = 0; i < 16000; i++) {
+		vec.push_back(vec.size());
+	}
+	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
+	for (int i = 0; i < 16000; i++) {
+		auto temp = vec[i];
+		a.insert(temp, temp);
+	}
+	//a.print();
+	for (int i = 0; i < 16000; i++) {
 		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
 	}
 }
@@ -50,7 +83,6 @@ TEST(AVL_Tree, AVL_remove1000) {
 }
 
 //TEST(AVL_Tree, AVL_height10) {
-=======
 //#include <gtest.h>
 //#include "dictionary_head.h"
 //
@@ -174,6 +206,7 @@ TEST(AVL_Tree, AVL_remove1000) {
 //		EXPECT_EQ((b.search(vec[i] + 10)->value) - (a.search(vec[i])->value), 10);
 //	}
 //}
+
 TEST(AVL_Tree, AVL_height10) {
 	AVL_Tree<int, int> a;
 	vector<int> vec;
@@ -259,7 +292,7 @@ TEST(AVL_Tree, AVL_right_turn) {
 	temp.insert(5, 5);
 	temp.insert(1, 1);
 }
-=======
+
 //
 //TEST(AVL_Tree, AVL_right_turn) {
 //	AVL_Tree<int, int> temp(20, 20);

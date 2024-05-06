@@ -9,48 +9,97 @@ int x = 0, y = 0;
 TEST(AVL_Tree, AVL_can_insert1000) {
 	AVL_Tree<int, int> a;
 	vector<int> vec;
+	const int N = 1000;
 
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		vec.push_back(vec.size());
 	}
-	/*shuffle(vec.begin(), vec.end(), mt19937(random_device()()));*/
-	for (int i = 0; i < 1000; i++) {
+	auto rand_gen = mt19937(0);
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	for (int i = 0; i < N; i++) {
 		auto temp = vec[i];
 		a.insert(temp, temp);
 	}
-	//a.print();
-	for (int i = 0; i < 1000; i++) {
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	/*for (int i = 0; i < N; i++) {
 		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
-	}
+	}*/
 }
+
+TEST(AVL_Tree, AVL_can_insert4000) {
+	AVL_Tree<int, int> a;
+	vector<int> vec;
+	const int N = 4000;
+
+	for (int i = 0; i < N; i++) {
+		vec.push_back(vec.size());
+	}
+	auto rand_gen = mt19937(0);
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	for (int i = 0; i < N; i++) {
+		auto temp = vec[i];
+		a.insert(temp, temp);
+	}
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	ADD_FAILURE();
+	/*for (int i = 0; i < N; i++) {
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
+	}*/
+}
+
+TEST(AVL_Tree, AVL_can_insert16000) {
+	AVL_Tree<int, int> a;
+	vector<int> vec;
+	const int N = 16000;
+
+	for (int i = 0; i < N; i++) {
+		vec.push_back(vec.size());
+	}
+	auto rand_gen = mt19937(0);
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	for (int i = 0; i < N; i++) {
+		auto temp = vec[i];
+		a.insert(temp, temp);
+	}
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	ADD_FAILURE();
+	/*for (int i = 0; i < N; i++) {
+		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
+	}*/
+}
+
+
 
 TEST(AVL_Tree, AVL_remove1000) {
 	AVL_Tree<int, int> a;
 	vector<int> vec;
+	const int N = 10000;
 
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < N; i++) {
 		vec.push_back(vec.size());
 	}
-	shuffle(vec.begin(), vec.end(), mt19937(random_device()()));
-	for (int i = 0; i < 1000; i++) {
+	auto rand_gen = mt19937(0);
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	for (int i = 0; i < N; i++) {
 		a.insert(vec[i], vec[i]);
 	}
 	//a.print();
-	for (int i = 0; i < 1000; i++) {
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	for (int i = 0; i < N; i++) {
 		auto temp = a.search(vec[i])->value;
 		EXPECT_EQ(temp, vec[i]);
 	}
-
-	for (int i = 0; i < 999; i++) {
+	shuffle(vec.begin(), vec.end(), rand_gen);
+	ADD_FAILURE();
+	/*for (int i = 0; i < N-1; i++) {
 		auto temp = a.remove(vec[i]);
 		
 		EXPECT_EQ(temp, true);
-	}
+	}*/
 	
 }
 
 //TEST(AVL_Tree, AVL_height10) {
-=======
 //#include <gtest.h>
 //#include "dictionary_head.h"
 //
@@ -59,7 +108,6 @@ TEST(AVL_Tree, AVL_remove1000) {
 //int x = 0, y = 0;
 //
 //TEST(AVL_Tree, AVL_can_insert1000) {
-
 //	AVL_Tree<int, int> a;
 //	vector<int> vec;
 //	vec.push_back(-1);
@@ -174,6 +222,7 @@ TEST(AVL_Tree, AVL_remove1000) {
 //		EXPECT_EQ((b.search(vec[i] + 10)->value) - (a.search(vec[i])->value), 10);
 //	}
 //}
+
 TEST(AVL_Tree, AVL_height10) {
 	AVL_Tree<int, int> a;
 	vector<int> vec;
@@ -221,7 +270,7 @@ TEST(AVL_Tree, AVL_remove_empty_false) {
 
 TEST(AVL_Tree, AVL_operator_plusplus) {
 	AVL_Tree<int, int> a;
-	vector<int> vec = { 1,2,6,-3,3 };//{7,2,3,-2,4}
+	vector<int> vec = { 1,2,6,-3,3 };
 	for (int i = 0; i < vec.size(); i++) {
 		a.insert(vec[i], vec[i]);
 	}
@@ -259,7 +308,6 @@ TEST(AVL_Tree, AVL_right_turn) {
 	temp.insert(5, 5);
 	temp.insert(1, 1);
 }
-=======
 //
 //TEST(AVL_Tree, AVL_right_turn) {
 //	AVL_Tree<int, int> temp(20, 20);

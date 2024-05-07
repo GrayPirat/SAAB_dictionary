@@ -474,11 +474,6 @@ protected:
 			auto pos = position;
 			if (root->left != NULL)
 			{
-
-				/*pos.X = position.X - rashod/2;
-				pos.Y = position.Y + 1;
-				SetConsoleCursorPosition(hConsole, pos);
-				cout << '/';*/
 				pos.X = pos.X - 5;
 				pos.Y = pos.Y + 1;
 				print_inner(root->left, pos);
@@ -488,10 +483,7 @@ protected:
 			pos = position;
 			if (root->right != NULL)
 			{
-				/*pos.X = position.X + rashod/2;
-				pos.Y = position.Y + 1;
-				SetConsoleCursorPosition(hConsole, pos);
-				cout << '\\';*/
+				
 				pos.X = pos.X + 5;
 				pos.Y = pos.Y + 1;
 				print_inner(root->right, pos);
@@ -513,6 +505,18 @@ protected:
 				remaster_stack(root->right);
 		}
 		
+	}
+	void link_nodes(TreeNode* u, TreeNode* v) {
+		if (u->top == NULL) {
+			start_root = v;
+		}
+		else if (u == u->top->left) {
+			u->top->left = v;
+		}
+		else {
+			u->top->right = v;
+		}
+		v->top = u->top;
 	}
 public:
 	Binary_Tree() {
@@ -539,158 +543,270 @@ public:
 	}
 
 	bool remove(KeyData key) {
-		TreeNode* temp = search(key);
-		if (!(temp==NULL) ) {
+		//TreeNode* temp = search(key);
+		//if (!(temp==NULL) ) {
+		//	for (int i = 0; i < stack.size(); i++) {
+		//		if (stack[i] == temp) {
+		//			stack.erase(stack.begin() + i);
+		//			break;
+		//		}
+		//	}
+		//	//left net right da
+		//	if (temp->left == NULL && temp->right != NULL) {
+		//		if (temp != start_root) {
+		//			TreeNode* save = temp;
+		//			temp = temp->top;
+		//			if (save == temp->left) {
+		//				save = save->right;
+		//				temp->left = save;
+		//				//temp = temp->left;
+		//			}
+		//			else {
+		//				save = save->right;
+		//				temp->right = save;
+		//				//temp = temp->right;
+		//			}
+		//			save->top = temp;
+		//			temp = back_to_root(temp, start_root);
+		//			start_root = temp;
+		//		}
+		//		else
+		//			start_root = temp->right;
+		//	}
+		//	//left da right net
+		//	else if (temp->left != NULL && temp->right == NULL) {
+		//		if (start_root != temp) {
+		//			TreeNode* save = temp;
+		//			temp = temp->top;
+		//			if (save == temp->left) {
+		//				save = save->left;
+		//				temp->left = save;
+		//				//temp = temp->left;
+		//			}
+		//			else {
+		//				save = save->left;
+		//				temp->right = save;
+		//				//temp=temp->right;
+		//			}
+		//			save->top = temp;
+		//			temp = back_to_root(temp, start_root);
+		//			start_root = temp;
+		//		}
+		//		else start_root = temp->left;
+		//	}
+		//	//tout est la
+		//	else if (temp->left != NULL && temp->right != NULL) {
+		//		auto save = temp;
+		//		auto s_left = temp->left;
+		//		auto s_right = temp->right;
+		//		temp = temp->right;
+		//		bool flag = false;
+		//		while (!flag) {
+		//			if (temp->left == NULL)
+		//				flag++;
+		//			else
+		//				temp = temp->left;
+		//		}
+		//		//temp = min sprava ->set this branch
+		//		auto min_r_branch = temp;
+		//		//create brand new node to build evrth
+		//		TreeNode* blank = new TreeNode(min_r_branch->key,min_r_branch->value);
+		//		blank->visited = min_r_branch->visited;
+		//		//join right branch
+		//		if (min_r_branch != s_right) {
+		//			if (min_r_branch->right != NULL) {
+		//				blank->right = min_r_branch->right;
+		//				min_r_branch->right->top = blank;
+		//			}
+		//			auto skipper = s_right;
+		//			while (skipper->left != min_r_branch)
+		//				skipper = skipper->left;
+		//			skipper->left = NULL;
+		//			skipper = back_to_root(skipper, s_right);
+		//			s_right = skipper;
+		//			temp = blank;
+		//			while (temp->right != NULL)
+		//				temp = temp->right;
+		//			temp->right = s_right;
+		//			s_right->top = temp;
+		//			temp = back_to_root(temp, blank);
+		//			blank = temp;
+		//		}
+		//		else {
+		//			if (s_right->right != NULL) {
+		//				blank->right = s_right->right;
+		//				s_right->right->top = blank;
+		//			}
+		//		}
+		//		//join left branch
+		//		blank->left = s_left;
+		//		s_left->top = blank;
+		//		//join main tree
+		//		if (save != start_root) {
+		//			auto s_top = save->top;
+		//			if (s_top->left == save) {
+		//				s_top->left = blank;
+		//				blank->top = s_top;
+		//			}
+		//			else {
+		//				s_top->right = blank;
+		//				blank->top = s_top;
+		//			}
+		//			s_top = back_to_root(s_top, start_root);
+		//			start_root = s_top;
+		//		}
+		//		else start_root = blank;
+		//		//if it dont work properly than try 2 var
+		//	}
+		//	//leaf
+		//	else if (temp->left == NULL && temp->right == NULL) {
+		//		if (temp != start_root) {
+		//			auto save = temp->top;
+		//			if (save->left == temp) {
+		//				save->left = NULL;
+		//				temp->top = NULL;
+		//			}
+		//			else {
+		//				save->right = NULL;
+		//				temp->top = NULL;
+		//			}
+		//			save = back_to_root(save, start_root);
+		//			start_root = save;
+		//		}
+		//		else {
+		//			start_root = NULL;
+		//			flag_not_null++;
+		//		}
+		//	}
+		//	stack.clear();
+		//	stack.shrink_to_fit();
+		//	remaster_stack(start_root);
+		//	return true;
+		/*}
+		return false;*/
+
+		TreeNode* z = Binary_Tree::search(key);
+
+		/*if (!(z == NULL)) {
 			for (int i = 0; i < stack.size(); i++) {
-				if (stack[i] == temp) {
+				if (stack[i] == z) {
 					stack.erase(stack.begin() + i);
 					break;
 				}
 			}
+		}*/
+		if (!(z == NULL)) //enter the alg
+		{
 
-			//left net right da
-			if (temp->left == NULL && temp->right != NULL) {
-				if (temp != start_root) {
-					TreeNode* save = temp;
-					temp = temp->top;
+			TreeNode* x;
+			auto y = z;
+			int y_original_color = y->color;
 
-					if (save == temp->left) {
-						save = save->right;
-						temp->left = save;
-						//temp = temp->left;
-					}
-					else {
-						save = save->right;
-						temp->right = save;
-						//temp = temp->right;
-					}
-
-					save->top = temp;
-					temp = back_to_root(temp, start_root);
-					start_root = temp;
+			if (z->left == NULL) { //leaf && left net right da
+				if (z == start_root && z->left == NULL && z->right == NULL)
+				{
+					start_root = new TreeNode();
+					flag_not_null = false;
+					return true;
 				}
 				else
-					start_root = temp->right;
-			}
-			//left da right net
-			else if (temp->left != NULL && temp->right == NULL) {
-				if (start_root != temp) {
-					TreeNode* save = temp;
-					temp = temp->top;
+				{
+					auto save = z->top;
+					TreeNode* temp1 = NULL;
+					if (z->right == NULL)
+					{
+						z->right = new TreeNode();
+						z->right->top = z;
+						temp1 = z->right;
+					}
+					x = z->right;
+					link_nodes(z, z->right);
+					delete z;
 
-					if (save == temp->left) {
-						save = save->left;
-						temp->left = save;
-						//temp = temp->left;
+					if (temp1 != NULL)
+					{
+						if (temp1->top->left == temp1)
+							temp1->top->left = NULL;
+						else
+							temp1->top->right = NULL;
+						temp1 = NULL;
 					}
-					else {
-						save = save->left;
-						temp->right = save;
-						//temp=temp->right;
-					}
-					save->top = temp;
-					temp = back_to_root(temp, start_root);
-					start_root = temp;
 				}
-				else start_root = temp->left;
-			}
 
-			//tout est la
-			else if (temp->left != NULL && temp->right != NULL) {
-				auto save = temp;
-				auto s_left = temp->left;
-				auto s_right = temp->right;
-				temp = temp->right;
+			}
+			else if (z->right == NULL) // left da right net
+			{
+				TreeNode* temp3 = NULL;
+				if (z->left == NULL)
+				{
+					z->left = new TreeNode();
+					z->left->top = z;
+					temp3 = z->left;
+				}
+				x = z->left;
+				link_nodes(z, z->left);
+
+				delete z;
+				
+				if (temp3 != NULL)
+				{
+					if (temp3->top->left == temp3)
+						temp3->top->left = NULL;
+					else
+						temp3->top->right = NULL;
+					temp3 = NULL;
+				}
+
+			}
+			else {
+				auto min_r_branch = y->right;
 				bool flag = false;
+
 				while (!flag) {
-					if (temp->left == NULL)
+					if (min_r_branch->left == NULL)
 						flag++;
 					else
-						temp = temp->left;
+						min_r_branch = min_r_branch->left;
 				}
-				//temp = min sprava ->set this branch
-				auto min_r_branch = temp;
+				y = min_r_branch;
 
-				//create brand new node to build evrth
-				TreeNode* blank = new TreeNode(min_r_branch->key,min_r_branch->value);
-				blank->visited = min_r_branch->visited;
-
-				//join right branch
-				if (min_r_branch != s_right) {
-					if (min_r_branch->right != NULL) {
-						blank->right = min_r_branch->right;
-						min_r_branch->right->top = blank;
-					}
-
-					auto skipper = s_right;
-					while (skipper->left != min_r_branch)
-						skipper = skipper->left;
-					skipper->left = NULL;
-					skipper = back_to_root(skipper, s_right);
-					s_right = skipper;
-					temp = blank;
-					while (temp->right != NULL)
-						temp = temp->right;
-					temp->right = s_right;
-					s_right->top = temp;
-					temp = back_to_root(temp, blank);
-					blank = temp;
+				TreeNode* temp2 = NULL;
+				if (y->right == NULL)
+				{
+					y->right = new TreeNode();
+					y->right->top = y;
+					temp2 = y->right;
+				}
+				x = y->right;
+				if (y->top == z) {
+					x->top = y;
 				}
 				else {
-					if (s_right->right != NULL) {
-						blank->right = s_right->right;
-						s_right->right->top = blank;
-					}
+					link_nodes(y, y->right);
+					y->right = z->right;
+					y->right->top = y;
 				}
 
-				//join left branch
-				blank->left = s_left;
-				s_left->top = blank;
+				link_nodes(z, y);
 
-				//join main tree
-				if (save != start_root) {
-					auto s_top = save->top;
-					if (s_top->left == save) {
-						s_top->left = blank;
-						blank->top = s_top;
-					}
-					else {
-						s_top->right = blank;
-						blank->top = s_top;
-					}
-					s_top = back_to_root(s_top, start_root);
-					start_root = s_top;
-				}
-				else start_root = blank;
-				//if it dont work properly than try 2 var
-			}
+				y->left = z->left;
+				y->left->top = y;
 
-			//leaf
-			else if (temp->left == NULL && temp->right == NULL) {
-				if (temp != start_root) {
-					auto save = temp->top;
-					if (save->left == temp) {
-						save->left = NULL;
-						temp->top = NULL;
-					}
-					else {
-						save->right = NULL;
-						temp->top = NULL;
-					}
-					save = back_to_root(save, start_root);
-					start_root = save;
-				}
-				else {
-					start_root = NULL;
-					flag_not_null++;
+				delete z;
+
+				if (temp2 != NULL)
+				{
+					if (temp2->top->left == temp2)
+						temp2->top->left = NULL;
+					else
+						temp2->top->right = NULL;
+					temp2 = NULL;
 				}
 			}
-			stack.clear();
-			stack.shrink_to_fit();
-			remaster_stack(start_root);
 			return true;
 		}
 		return false;
+		
 	}
 
 	int get_size() {
@@ -840,6 +956,25 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		
 	}
 
+
+	void set_height_vertical(it root)
+	{
+		if (root->left == NULL && root->right == NULL) {
+			root->Height = 0;
+		}
+		else
+		{
+			int t1 = 0;
+			int t2 = 0;
+			if (root->left!=NULL)
+				t1 = root->left->Height;
+			if (root->right != NULL)
+				t2 = root->right->Height;
+			root->Height = max(t1, t2) + 1;
+		}
+		if (root->top != NULL)
+			set_height_vertical(root->top);
+	}
 	it back_to_root(it temp, it ans) override
 	{
 		while (temp != ans)
@@ -883,18 +1018,19 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 	void balance(TreeNode* p) // áàëàíñèðîâêà óçëà p
 	{
 		auto save = p;
-		if (bfactor(p) == 2)
+		auto factor = bfactor(p);
+		if (factor== 2)
 		{
 			
 			if (bfactor(save->right) < 0)
 				save->right = SmallRotateRight(save->right);
 			save = SmallRotateLeft(save);
 			if (p ==start_root)
-				start_root = save; p = start_root;
+				start_root = save;
 			
 			
 		}
-		else if (bfactor(p) == -2)
+		else if (factor == -2)
 		{
 			auto save = p;
 			if (bfactor(save->left) > 0)
@@ -903,10 +1039,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 			
 			if (p == start_root)
 				start_root = save;
-			else
-			{
-
-			}
+			
 		}
 	}
 
@@ -932,6 +1065,153 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		}
 	}
 
+	bool remove_inner(KeyData key)
+	{
+		TreeNode* z = Binary_Tree::search(key);
+
+		/*if (!(z == NULL)) {
+			for (int i = 0; i < stack.size(); i++) {
+				if (stack[i] == z) {
+					stack.erase(stack.begin() + i);
+					break;
+				}
+			}
+		}*/
+		if (!(z == NULL)) //enter the alg
+		{
+
+			TreeNode* x;
+			auto y = z;
+
+			if (z->left == NULL) { //leaf && left net right da
+				if (z == start_root && z->left == NULL && z->right == NULL)
+				{
+					start_root = new TreeNode();
+					flag_not_null = false;
+					return true;
+				}
+				else
+				{
+					auto save = z->top;
+					TreeNode* temp1 = NULL;
+					if (z->right == NULL)
+					{
+						z->right = new TreeNode();
+						z->right->top = z;
+						temp1 = z->right;
+					}
+					x = z->right;
+					link_nodes(z, z->right);
+					delete z;
+					if (temp1 != NULL)
+					{
+						if (temp1->top->left == temp1)
+							temp1->top->left = NULL;
+						else
+							temp1->top->right = NULL;
+						temp1 = NULL;
+					}
+					if (save != NULL)
+					{
+						save->Height--;
+					}
+					
+					
+				}
+
+			}
+			else if (z->right == NULL) // left da right net
+			{
+				auto save = z->top;
+				TreeNode* temp3 = NULL;
+				if (z->left == NULL)
+				{
+					z->left = new TreeNode();
+					z->left->top = z;
+					temp3 = z->left;
+				}
+				x = z->left;
+				link_nodes(z, z->left);
+
+				delete z;
+
+				if (temp3 != NULL)
+				{
+					if (temp3->top->left == temp3)
+						temp3->top->left = NULL;
+					else
+						temp3->top->right = NULL;
+					temp3 = NULL;
+				}
+				if (save != NULL)
+				{
+					save->Height--;
+				}
+
+			}
+			else {
+				auto min_r_branch = y->right;
+				bool flag = false;
+				bool flag_near = false;
+				bool flag_far = false;
+
+				while (!flag) {
+					if (min_r_branch->left == NULL)
+						flag++;
+					else
+						min_r_branch = min_r_branch->left;
+				}
+				y = min_r_branch;
+				auto save = y->top;
+
+				TreeNode* temp2 = NULL;
+				if (y->right == NULL)
+				{
+					y->right = new TreeNode();
+					y->right->top = y;
+					temp2 = y->right;
+				}
+				x = y->right;
+				
+				if (y->top == z) {
+					x->top = y;
+					flag_near++;
+				}
+				else {
+					link_nodes(y, y->right);
+					y->right = z->right;
+					y->right->top = y;
+					flag_far++;
+				}
+
+				link_nodes(z, y);
+
+				y->left = z->left;
+				y->left->top = y;
+
+				delete z;
+
+				if (temp2 != NULL)
+				{
+					if (temp2->top->left == temp2)
+						temp2->top->left = NULL;
+					else
+						temp2->top->right = NULL;
+					temp2 = NULL;
+				}
+				if (flag_far)
+				{
+					set_height_vertical(save);
+				}
+				if (flag_near)
+				{
+					set_height_vertical(y);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 public:
 	AVL_Tree() {
 		start_root = new  TreeNode();
@@ -944,16 +1224,14 @@ public:
 	
 	it insert(KeyData key, Data val) {
 		auto ans = Binary_Tree::insert(key, val);
-		set_height(start_root);
-
-
+		set_height_vertical(ans);
 		balance(start_root);
 		return ans;
 	}
+	
 
 	bool remove(KeyData key) {
-		auto ans = Binary_Tree::remove(key);
-		set_height(start_root);
+		auto ans = remove_inner(key);
 		balance(start_root);
 		return ans;
 	}
@@ -1285,8 +1563,8 @@ public:
 	{
 		auto tmp = Binary_Tree::insert(key, val);
 		tmp->color = red;
-		/*if (check_out_ins(tmp))
-			return tmp;*/
+		if (check_out_ins(tmp))
+			return tmp;
 		return NULL;
 	}
 
@@ -1462,14 +1740,14 @@ public:
 	{
 		TreeNode* z = Binary_Tree::search(key);
 
-		if (!(z == NULL)) {
+		/*if (!(z == NULL)) {
 			for (int i = 0; i < stack.size(); i++) {
 				if (stack[i] == z) {
 					stack.erase(stack.begin() + i);
 					break;
 				}
 			}
-		}
+		}*/
 		if (!(z == NULL)) //enter the alg
 		{
 
@@ -1586,196 +1864,7 @@ public:
 					temp2 = NULL;
 				}
 			}
-			
 			return true;
-			
-			
-			//left net right da
-			//if (temp->left == NULL && temp->right != NULL) {
-			//	if (temp != start_root) {
-			//		TreeNode* save = temp;
-			//		temp = temp->top;
-			//		if (save == temp->left) {
-			//			save = save->right;
-			//			temp->left = save;
-			//		}
-			//		else {
-			//			save = save->right;
-			//			temp->right = save;
-			//		}
-			//		save->top = temp;
-			//		temp = back_to_root(temp, start_root);
-			//		start_root = temp;
-			//		if (color ==black && flag)
-			//			check_out_delete(save);
-			//	}
-			//	else
-			//	{
-			//		start_root = temp->right;
-			//		start_root->top = NULL;
-			//		if (flag)
-			//		{
-			//			bool flag_right = start_root->right != NULL ? 1 : 0;
-			//			if (flag_right)
-			//				check_out_delete(start_root->right);
-			//		}
-			//			
-			//	}
-			//		
-			//}
-			////left da right net
-			//else if (temp->left != NULL && temp->right == NULL) {
-			//	if (start_root != temp) {
-			//		TreeNode* save = temp;
-			//		auto color = save->color;
-			//		temp = temp->top;
-			//		if (save == temp->left) {
-			//			save = save->left;
-			//			temp->left = save;
-			//		}
-			//		else {
-			//			save = save->left;
-			//			temp->right = save;
-			//		}
-			//		save->top = temp;
-			//		
-			//		temp = back_to_root(temp, start_root);
-			//		start_root = temp;
-			//		if (color ==black && flag)
-			//			check_out_delete(save);
-			//	}
-			//	else
-			//	{
-			//		start_root = temp->left;
-			//		start_root->top = NULL;
-			//		if (flag)
-			//		{
-			//			bool flag_left = start_root->left != NULL ? 1 : 0;
-			//			if (flag_left)
-			//				check_out_delete(start_root->left);
-			//		}
-			//			
-			//	}
-			//}
-			////leaf
-			//else if (temp->left == NULL && temp->right == NULL) {
-			//	if (temp != start_root) {
-			//		auto save = temp->top;
-			//		bool flag_left = (temp == temp->top->left) ? true : false;
-			//		colors color = temp->color;
-			//		if (save->left == temp) {
-			//			save->left = NULL;
-			//			temp->top = NULL;
-			//		}
-			//		else {
-			//			save->right = NULL;
-			//			temp->top = NULL;
-			//		}
-			//		auto save_save = save;
-			//		save = back_to_root(save, start_root);
-			//		start_root = save;
-			//		
-			//		if (color ==black)
-			//		{
-			//			if (flag_left)
-			//			{
-			//				save_save->left = new TreeNode();
-			//				save_save->left->color = black;
-			//				save_save->left->top = save_save;
-			//				if (flag)
-			//					check_out_delete(save_save->left);
-			//				save_save->left = NULL;
-			//			}
-			//			else
-			//			{
-			//				save_save->right = new TreeNode();
-			//				save_save->right->top = save_save;
-			//				save_save->right->color = black;
-			//				if (flag)
-			//					check_out_delete(save_save->right);
-			//				save_save->right = NULL;
-			//			}
-			//		}
-			//	}
-			//	else {
-			//		start_root = NULL;
-			//		flag_not_null++;
-			//	}
-			//}
-			////vse
-			//else if (temp->left != NULL && temp->right != NULL)
-			//{
-			//	auto save = temp;
-			//	auto color = temp->color;
-			//	auto s_left = temp->left;
-			//	auto s_right = temp->right;
-			//	temp = temp->right;
-			//	bool flag = false;
-			//	while (!flag) {
-			//		if (temp->left == NULL)
-			//			flag++;
-			//		else
-			//			temp = temp->left;
-			//	}
-			//	bool falg_min_r_save = false;
-			//	//temp = min sprava ->set this branch
-			//	auto min_r_branch = temp;
-			//	auto min_r_save = min_r_branch->right;
-			//	if (min_r_save == NULL)
-			//	{
-			//		min_r_save = new TreeNode();
-			//		min_r_save->color = black;
-			//		min_r_save->top = min_r_branch;
-			//		falg_min_r_save = true;
-			//	}
-			//	if (min_r_branch->top == save) {
-			//		min_r_save->top = min_r_branch;
-			//	}
-			//	//create brand new node to build evrth
-			//	TreeNode* blank = new TreeNode(min_r_branch->key, min_r_branch->value);
-			//	blank->visited = min_r_branch->visited;
-			//	blank->color = min_r_branch->color;
-			//	remove_inner(min_r_branch->key, min_r_branch->value,0);
-			//	blank->left = s_left;
-			//	s_left->top = blank;
-			//	blank->right = s_right;
-			//	if (s_right!=NULL)
-			//		s_right->top = blank;
-			//	if (save != start_root) {
-			//		auto s_top = save->top;
-			//		if (s_top->left == save) 
-			//		{
-			//			s_top->left = blank;
-			//			blank->top = s_top;
-			//		}
-			//		else {
-			//			s_top->right = blank;
-			//			blank->top = s_top;
-			//		}
-			//		s_top = back_to_root(s_top, start_root);
-			//		start_root = s_top;
-			//	}
-			//	else 
-			//		start_root = blank; print();
-			//	if (color == black && flag)
-			//	{
-			//		print();
-			//		check_out_delete(min_r_save);
-			//	}
-			//	if (falg_min_r_save)
-			//	{
-			//		if (min_r_save->top->left == min_r_save)
-			//			min_r_save->top->left = NULL;
-			//		else
-			//			min_r_save->top->right = NULL;
-			//	}
-			// 
-			//}
-			//stack.clear();
-			//stack.shrink_to_fit();
-			//remaster_stack(start_root);
-			//return true;
-
 		}
 		return false;
 	}

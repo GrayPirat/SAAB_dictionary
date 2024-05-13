@@ -1231,6 +1231,9 @@ public:
 	
 
 	bool remove(KeyData key) {
+		if (key == start_root->key) {
+			return 1;
+		}
 		auto ans = remove_inner(key);
 		balance(start_root);
 		return ans;

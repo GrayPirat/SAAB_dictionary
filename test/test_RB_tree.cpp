@@ -2,8 +2,6 @@
 #include "dictionary_head.h"
 
 
-
-
 TEST(RB_Tree, RB_can_insert1000) {
 	RB_Tree<int, int> a;
 	vector<int> vec;

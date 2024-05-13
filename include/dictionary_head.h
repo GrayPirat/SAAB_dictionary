@@ -975,6 +975,15 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		if (root->top != NULL)
 			set_height_vertical(root->top);
 	}
+
+	int getHeight(it node) {
+		if (node == NULL) {
+			return 0;
+		}
+		else {
+			return node->Height;
+		}
+	}
 	it back_to_root(it temp, it ans) override
 	{
 		while (temp != ans)
@@ -1214,7 +1223,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 	}
 public:
 	AVL_Tree() {
-		start_root = new  TreeNode();
+		start_root = NULL;
 	}
 
 	AVL_Tree(KeyData key,Data val) {
@@ -1222,14 +1231,46 @@ public:
 		flag_not_null = true;
 	}
 	
-	it insert(KeyData key, Data val) {
+	/*it insert(KeyData key, Data val) {
 		auto ans = Binary_Tree::insert(key, val);
 		set_height_vertical(ans);
 		balance(start_root);
 		return ans;
+	}*/
+	it insert_inner(it  node, KeyData key, Data val)
+	{
+		if (start_root == NULL) {
+			start_root = new TreeNode();
+			start_root->value = val;
+			start_root->key = key;
+			start_root->Height = 0;
+			return start_root;
+		}
+		if (node == NULL) {
+			node = new TreeNode();
+			node->value = val;
+			node->key = key;
+			node->Height = 0;
+			return node;
+		}
+		if (key <= node->key) {
+			node->left = insert_inner(node->left, key, val);
+			node->left->top = node;
+		}
+		if (key > node->key) {
+			node->right = insert_inner(node->right, key, val);
+			node->right->top = node;
+		}
+		node->Height = 1 + max(getHeight(node->left), getHeight(node->right));
+		/*balance(node);*/
+		return node;
 	}
-	
-
+	it insert(KeyData key, Data val)
+	{
+		auto ans = insert_inner(start_root, key, val);
+		balance(start_root);
+		return ans;
+	}
 	bool remove(KeyData key) {
 		if (key == start_root->key) {
 			return 1;

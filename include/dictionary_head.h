@@ -946,7 +946,6 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		}
 		return current;
 	}
-
 	it maxValueNode(it node) {
 		NodeAVL<KeyType, ValueType>* current = node;
 		while (current && current->right != nullptr) {
@@ -954,9 +953,6 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		}
 		return current;
 	}
-
-	
-
 	void print_inner(TreeNode* root, COORD position) {
 		if (root != NULL) {
 			SetConsoleCursorPosition(hConsole, position);
@@ -978,8 +974,6 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 			}
 		}
 	}
-
-
 	it balance(it node) {
 		int balance = getBalance(node);
 		if (balance > 1) {
@@ -1182,18 +1176,14 @@ public:
 		flag_not_null = true;
 	}
 	
-	it insert(KeyData key, Data val) {
-		auto ans = Binary_Tree::insert(key, val);
-		set_height_vertical(ans);
-		balance(start_root);
-		return ans;
+	void insert(KeyData key, Data val) {
+		insertNode(start_root, key, val);
+
 	}
 	
 
-	bool remove(KeyData key) {
-		auto ans = remove_inner(key);
-		balance(start_root);
-		return ans;
+	void remove(KeyData key) {
+		removeNode(start_root, key);
 	}
 	
 	void print() {

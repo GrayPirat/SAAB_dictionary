@@ -938,110 +938,24 @@ public:
 
 template<class KeyData,class Data>
 class AVL_Tree : public Binary_Tree<KeyData,Data> {
-	int set_height(TreeNode* root) {
-		int t1 = 0;
-		int t2 = 0;
-		if (root->left != NULL)
-			t1=set_height(root->left);
-		if (root->right != NULL)
-			t2 = set_height(root->right);
-		if (root->left == NULL && root->right == NULL) {
-			root->Height = 0;
-			return 0;
+	
+	it minValueNode(it node) {
+		it current = node;
+		while (current && current->left != nullptr) {
+			current = current->left;
 		}
-		else {
-			root->Height = max(t1, t2) + 1;
-			return root->Height;
-		}
-		
+		return current;
 	}
 
-
-	void set_height_vertical(it root)
-	{
-		if (root->left == NULL && root->right == NULL) {
-			root->Height = 0;
+	it maxValueNode(it node) {
+		NodeAVL<KeyType, ValueType>* current = node;
+		while (current && current->right != nullptr) {
+			current = current->right;
 		}
-		else
-		{
-			int t1 = 0;
-			int t2 = 0;
-			if (root->left!=NULL)
-				t1 = root->left->Height;
-			if (root->right != NULL)
-				t2 = root->right->Height;
-			root->Height = max(t1, t2) + 1;
-		}
-		if (root->top != NULL)
-			set_height_vertical(root->top);
-	}
-	it back_to_root(it temp, it ans) override
-	{
-		while (temp != ans)
-			temp = temp->top;
-		return temp;
-	}
-	int bfactor(TreeNode* p)
-	{
-		auto h_l = 0;
-		auto h_r = 0;
-		if (p->left != NULL)
-			h_l = p->left->Height;
-		if (p->right != NULL)
-			h_r = p->right->Height;
-		return h_r - h_l;
+		return current;
 	}
 
-	it SmallRotateRight(TreeNode* p) { // ïðàâûé ïîâîðîò âîêðóã p
-		auto q = p->left;
-		p->left = q->right;
-		if (p->left != NULL)
-			p->left->top = p;
-		q->right = p;
-		q->top = p->top;
-		p->top = q;
-
-		return q;
-	}
-
-	it SmallRotateLeft(TreeNode* q) { // ëåâûé ïîâîðîò âîêðóã q
-		auto p = q->right;
-		q->right = p->left;
-		if (q->right != NULL)
-			q->right->top = q;
-		p->left = q;
-		p->top = q->top;
-		q->top = p;
-		return p;
-	}
-
-	void balance(TreeNode* p) // áàëàíñèðîâêà óçëà p
-	{
-		auto save = p;
-		auto factor = bfactor(p);
-		if (factor== 2)
-		{
-			
-			if (bfactor(save->right) < 0)
-				save->right = SmallRotateRight(save->right);
-			save = SmallRotateLeft(save);
-			if (p ==start_root)
-				start_root = save;
-			
-			
-		}
-		else if (factor == -2)
-		{
-			auto save = p;
-			if (bfactor(save->left) > 0)
-				save->left = SmallRotateLeft(save->left);
-			save = SmallRotateRight(save);
-			
-			if (p == start_root)
-				start_root = save;
-			
-		}
-	}
+	
 
 	void print_inner(TreeNode* root, COORD position) {
 		if (root != NULL) {
@@ -1065,153 +979,199 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		}
 	}
 
-	bool remove_inner(KeyData key)
-	{
-		TreeNode* z = Binary_Tree::search(key);
 
-		/*if (!(z == NULL)) {
-			for (int i = 0; i < stack.size(); i++) {
-				if (stack[i] == z) {
-					stack.erase(stack.begin() + i);
-					break;
-				}
-			}
-		}*/
-		if (!(z == NULL)) //enter the alg
-		{
-
-			TreeNode* x;
-			auto y = z;
-
-			if (z->left == NULL) { //leaf && left net right da
-				if (z == start_root && z->left == NULL && z->right == NULL)
-				{
-					start_root = new TreeNode();
-					flag_not_null = false;
-					return true;
-				}
-				else
-				{
-					auto save = z->top;
-					TreeNode* temp1 = NULL;
-					if (z->right == NULL)
-					{
-						z->right = new TreeNode();
-						z->right->top = z;
-						temp1 = z->right;
-					}
-					x = z->right;
-					link_nodes(z, z->right);
-					delete z;
-					if (temp1 != NULL)
-					{
-						if (temp1->top->left == temp1)
-							temp1->top->left = NULL;
-						else
-							temp1->top->right = NULL;
-						temp1 = NULL;
-					}
-					if (save != NULL)
-					{
-						save->Height--;
-					}
-					
-					
-				}
-
-			}
-			else if (z->right == NULL) // left da right net
-			{
-				auto save = z->top;
-				TreeNode* temp3 = NULL;
-				if (z->left == NULL)
-				{
-					z->left = new TreeNode();
-					z->left->top = z;
-					temp3 = z->left;
-				}
-				x = z->left;
-				link_nodes(z, z->left);
-
-				delete z;
-
-				if (temp3 != NULL)
-				{
-					if (temp3->top->left == temp3)
-						temp3->top->left = NULL;
-					else
-						temp3->top->right = NULL;
-					temp3 = NULL;
-				}
-				if (save != NULL)
-				{
-					save->Height--;
-				}
-
+	it balance(it node) {
+		int balance = getBalance(node);
+		if (balance > 1) {
+			if (node->right == nullptr) {
+				node = rightRotate(node);
 			}
 			else {
-				auto min_r_branch = y->right;
-				bool flag = false;
-				bool flag_near = false;
-				bool flag_far = false;
-
-				while (!flag) {
-					if (min_r_branch->left == NULL)
-						flag++;
-					else
-						min_r_branch = min_r_branch->left;
+				if (getBalance(node->left) < 0) {
+					node = leftRotate(node);
 				}
-				y = min_r_branch;
-				auto save = y->top;
-
-				TreeNode* temp2 = NULL;
-				if (y->right == NULL)
-				{
-					y->right = new TreeNode();
-					y->right->top = y;
-					temp2 = y->right;
+				return bigRightRotate(node);
+			}
+		}
+		else if (balance < -1) {
+			if (node->left == nullptr) {
+				node = leftRotate(node);
+			}
+			else {
+				if (getBalance(node->right) > 0) {
+					node = rightRotate(node);
 				}
-				x = y->right;
-				
-				if (y->top == z) {
-					x->top = y;
-					flag_near++;
+				return bigLeftRotate(node);
+			}
+		}
+		return node;
+	}
+
+	int getHeight(it node) {
+		if (node == nullptr) {
+			return 0;
+		}
+		return node->Height;
+	}
+
+	it insertNode(it node, KeyData key, Data value) {
+		if (node == nullptr) {
+			return new TreeNode(key, value);
+		}
+
+		if (key < node->key) {
+			node->left = insertNode(node->left, key, value);
+		}
+		else if (key > node->key) {
+			node->right = insertNode(node->right, key, value);
+		}
+		else {
+			return node;
+		}
+
+		node->Height = 1 + max(getHeight(node->left), getHeight(node->right));
+
+		int balance = getBalance(node);
+
+		if (balance > 1 && key < node->left->key) {
+			return rightRotate(node);
+		}
+
+		if (balance < -1 && key > node->right->key) {
+			return leftRotate(node);
+		}
+
+		if (balance > 1 && key > node->left->key) {
+			node->left = leftRotate(node->left);
+			return rightRotate(node);
+		}
+
+		if (balance < -1 && key < node->right->key) {
+			node->right = rightRotate(node->right);
+			return leftRotate(node);
+		}
+
+		return node;
+	}
+	it removeNode(it root, KeyData key) {
+		if (root == NULL) {
+			
+			return root;
+		}
+		if (root == start_root && root->left == NULL && root->right == NULL)
+		{
+			start_root = NULL;
+			return start_root;
+		}
+
+		if (key < root->key) {
+			root->left = removeNode(root->left, key);
+		}
+		else if (key > root->key) {
+			root->right = removeNode(root->right, key);
+		}
+		else {
+			if ((root->left == NULL) || (root->right == NULL)) {
+				it temp = root->left ? root->left : root->right;
+
+				if (temp == NULL) {
+					temp = root;
+					root = NULL;
 				}
 				else {
-					link_nodes(y, y->right);
-					y->right = z->right;
-					y->right->top = y;
-					flag_far++;
+					*root = *temp;
 				}
 
-				link_nodes(z, y);
-
-				y->left = z->left;
-				y->left->top = y;
-
-				delete z;
-
-				if (temp2 != NULL)
-				{
-					if (temp2->top->left == temp2)
-						temp2->top->left = NULL;
-					else
-						temp2->top->right = NULL;
-					temp2 = NULL;
-				}
-				if (flag_far)
-				{
-					set_height_vertical(save);
-				}
-				if (flag_near)
-				{
-					set_height_vertical(y);
-				}
+				delete temp;
 			}
-			return true;
+			else {
+				it temp = minValueNode(root->right);
+				root->key = temp->key;
+				root->right = removeNode(root->right, temp->key);
+			}
 		}
-		return false;
+
+		if (root == NULL) {
+			return root;
+		}
+
+		root->Height = 1 + max(getHeight(root->left), getHeight(root->right));
+
+		int balance = getBalance(root);
+
+		if (balance > 1 && getBalance(root->left) >= 0) {
+			return rightRotate(root);
+		}
+
+		if (balance > 1 && getBalance(root->left) < 0) {
+			root->left = leftRotate(root->left);
+			return rightRotate(root);
+		}
+
+		if (balance < -1 && getBalance(root->right) <= 0) {
+			return leftRotate(root);
+		}
+
+		if (balance < -1 && getBalance(root->right) > 0) {
+			root->right = rightRotate(root->right);
+			return leftRotate(root);
+		}
+
+		return root;
 	}
+
+	it rightRotate(it y) {
+		it x = y->left;
+		if (x->right != nullptr) {
+			x->right->top = y;
+		}
+		it T2 = x->right;
+		y->left = T2;
+		x->right = y;
+		y->top = x;
+		x->top = y->top;
+		y->Height = 1 + max(getHeight(y->left), getHeight(y->right));
+		x->Height = 1 + max(getHeight(x->left), getHeight(x->right));
+
+		return x;
+	}
+
+	int getBalance(it node) {
+		if (node == nullptr) {
+			return 0;
+		}
+		return getHeight(node->left) - getHeight(node->right);
+	}
+
+	it leftRotate(it x) {
+		it y = x->right;
+		it T2 = y->left;
+		x->right = T2;
+		if (y->left != nullptr) {
+			y->left->top = x;
+		}
+		y->left = x;
+		x->top = y;
+		y->top = x->top;
+		x->Height = 1 + max(getHeight(x->left), getHeight(x->right));
+		y->Height = 1 + max(getHeight(y->left), getHeight(y->right));
+
+		return y;
+	}
+
+	it bigRightRotate(it node) {
+		it x = node;
+		node = rightRotate(x);
+		return leftRotate(node);
+	}
+
+	it bigLeftRotate(it node) {
+		it y = node;
+		node = leftRotate(y);
+		return rightRotate(node);
+	}
+
+	
 public:
 	AVL_Tree() {
 		start_root = new  TreeNode();
@@ -1222,25 +1182,20 @@ public:
 		flag_not_null = true;
 	}
 	
-	it insert(KeyData key, Data val) {
-		auto ans = Binary_Tree::insert(key, val);
-		set_height_vertical(ans);
-		balance(start_root);
-		return ans;
-	}
-	
+	void insert(const KeyData& key, Data value) {
+		start_root = insertNode(start_root, key, value);
 
-	bool remove(KeyData key) {
-		auto ans = remove_inner(key);
-		balance(start_root);
-		return ans;
 	}
-	
-	void print() {
-		system("cls");
-		position.X = 50;
-		position.Y = 0;
-		print_inner(start_root, position);
+
+	int sizeTree() {
+		int _size = size;
+		return _size;
+	}
+
+	void remove(const KeyData& key) {
+		
+		removeNode(start_root, key);
+
 	}
 };
 

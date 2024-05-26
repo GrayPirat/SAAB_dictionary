@@ -1174,7 +1174,7 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 	
 public:
 	AVL_Tree() {
-		start_root = new  TreeNode();
+		start_root = NULL;
 	}
 
 	AVL_Tree(KeyData key,Data val) {
@@ -1182,20 +1182,25 @@ public:
 		flag_not_null = true;
 	}
 	
-	void insert(const KeyData& key, Data value) {
-		start_root = insertNode(start_root, key, value);
-
+	it insert(KeyData key, Data val) {
+		auto ans = Binary_Tree::insert(key, val);
+		set_height_vertical(ans);
+		balance(start_root);
+		return ans;
 	}
+	
 
-	int sizeTree() {
-		int _size = size;
-		return _size;
+	bool remove(KeyData key) {
+		auto ans = remove_inner(key);
+		balance(start_root);
+		return ans;
 	}
-
-	void remove(const KeyData& key) {
-		
-		removeNode(start_root, key);
-
+	
+	void print() {
+		system("cls");
+		position.X = 50;
+		position.Y = 0;
+		print_inner(start_root, position);
 	}
 };
 

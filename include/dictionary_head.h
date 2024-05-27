@@ -8,406 +8,10 @@
 #include<iosfwd>
 #include<windows.h>
 #include<cstdio>
+
 using namespace std;
 
 
-
-template<class KeyData, class Data>
-class Table {
-protected:
-	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData, Data>>>> it; //type of vector iterator 
-	vector<pair<KeyData, Data>> arr; // dictionary
-
-public:
-	virtual it insert(KeyData key, Data value) { //insert cacheline 
-		auto iter = arr.begin();
-		while (iter != arr.end()) {
-			if (iter->first == key) {
-				iter->second = value;
-				return iter;
-			}
-			++iter;
-		}
-		arr.push_back(make_pair(key, value));
-		iter = arr.end() - 1;
-		return iter;
-	}
-
-	virtual bool remove(KeyData key) { // remove ...
-		auto iter = arr.begin();
-		while (iter != arr.end()) {
-			if (iter->first == key) {
-				arr.erase(iter);
-				return true;
-			}
-			++iter;
-		}
-		return false;
-	}
-
-	it operator[](KeyData key) { // access to line`s data
-		auto iter = arr.begin();
-		while (iter != arr.end()) {
-			if (iter->first == key)
-				return iter;
-			iter++;
-		}
-		Data t;
-		return insert(key, t);
-	}
-	
-	virtual it search(KeyData key) { // search for line with it`s key
-		auto iter = arr.begin();
-		while (iter != arr.end()) {
-			if (key == iter->first) {
-
-				return iter;
-			}
-			++iter;
-		}
-		return arr.end();
-	}
-
-	//constructor
-	Table() {}
-
-	//copy constructor
-	Table(const Table& d) {
-		auto iter = d.arr.begin();
-		while (iter != d.arr.end()) {
-			arr.push_back(make_pair(iter->first, iter->second));
-			iter++;
-		}
-	}
-
-	//destructor
-	~Table() {
-		arr.clear();
-		arr.shrink_to_fit();
-	}
-};
-
-
-template<class KeyData, class Data>
-class Sorted_Table :protected Table<KeyData, Data> {
-protected:
-	bool comp_given;
-	typedef _CoreCrtNonSecureSearchSortCompareFunction  comp;
-	comp temp;
-
-public:
-	Sorted_Table() {
-		comp_given = 0;
-	}
-
-	Sorted_Table(comp t) {
-		comp_given = true;
-		temp = t;
-	}
-
-	void sort_table() {
-		if (comp_given == false) {
-			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)));
-		}
-		else {
-			std::qsort(arr.begin(), arr.size(), sizeof(make_pair(KeyData t, Data y)), temp);
-		}
-	}
-
-	it f_binar(KeyData key) {
-		auto beg = arr.begin();
-		auto end = arr.end();
-		auto mid = arr.begin() + (end - beg) / 2;
-		while (mid != end && mid->first != key) {
-			if (key < mid->first)
-				end = mid;
-			else
-				beg = mid + 1;
-			mid = beg + (end - beg) / 2;
-		}
-		return mid;
-	}
-
-	it insert(KeyData key, Data value) override {
-		auto l_iter = arr.begin();
-		auto r_iter = arr.end();
-		if (arr.size() == 0) {
-			arr.push_back(make_pair(key, value));
-			return arr.begin();
-		}
-
-		auto finded = f_binar(key);
-		if (finded != arr.end()) {
-			if ((finded)->first == key) {
-				(finded)->second = value;
-				return finded;
-			}
-		}
-
-		if (finded == arr.end()) {
-			arr.push_back(make_pair(key, value));
-			l_iter = arr.end() - 1;
-			return l_iter;
-		}
-		else {
-			arr.insert(finded, make_pair(key, value));
-			return finded;
-		}
-	}
-
-	bool remove(KeyData key) override {
-		if (arr.size() == 0) 
-			return false;
-		auto iter = f_binar(key);
-		if (iter->first == key) {
-			arr.erase(iter);
-			return true;
-		}
-		return false;
-	}
-
-	it operator[](KeyData key) {
-		auto iter = f_binar(key);
-		if (iter == arr.end()) {
-			Data t;
-			return insert(key, t);
-		}
-		else
-			return iter;
-	}
-
-	it search(KeyData key) override {
-		return f_binar(key);
-	}
-
-};
-
-
-template<class KeyData, class Data>
-class Hash_Table :protected Table<KeyData, Data> {
-private:
-	typedef _Vector_iterator<_Vector_val<_Simple_types<pair<KeyData,Data>>>> it;
-	/*typedef std::_Vector_iterator<std::_Vector_val<_Simple_types<vector<pair<KeyData, Data>>>>> big_it;*/
-
-	bool Key_str = false; // check if keydata is ...
-	bool Key_vec = false;
-	bool Key_int = false;
-	bool Key_double = false;
-	
-	bool flag_for_iter = false; // flag for it
-
-	const int simple_base = 7; // for hash
-	int table_size = 0;
-
-	vector<vector<pair<KeyData,Data>>> arr;
-	it gen_iter;
-	int b_iter = 0;
-	const int mx_inserted = 2;
-
-	int get_hash(vector<int> key, int razmer_table) {
-		int ans = 0;
-		for (int i = 0; i < key.size(); i++) {
-			ans += key[i] * pow(simple_base, i);
-		}
-		return ans % razmer_table;
-	} // get ahash
-
-	int get_hash(string key, int razmer_table) {
-		int ans = 0;
-		for (int i = 0; i < key.size(); i++)
-			ans += (int)(key[i]) * pow(simple_base, i);
-		return ans % razmer_table;
-	}
-
-	int get_hash(int key, int razmer_table) {
-		int ans = key;
-		ans >> 13;
-		ans << 4;
-		ans >> 58;
-		ans>>27;
-		ans = ~ans;
-		return abs(ans % razmer_table);
-	}
-	
-	int get_hash(double key, int razmer_table) {
-		int ans = 0;
-		string temp = to_string(key);/*  to_string(key);*/
-		string temp2 = "";
-		for (int i = 0; i < temp.size(); i++) {
-			if (temp[i] != '.')
-				temp2.push_back(temp[i]);
-		}
-		ans = get_hash(temp2, razmer_table);
-		ans = get_hash(ans, razmer_table);
-		return get_hash(ans, razmer_table) % razmer_table;
-	}
-
-public:
-	Hash_Table(int n) {
-		n = max(1, n);
-		if (is_same_v<string,KeyData>)
-			Key_str = true;
-		if (is_same_v<KeyData, vector<int>>)
-			Key_vec = true;
-		if (is_same_v<KeyData, int>)
-			Key_int = true;
-		if (is_same_v<KeyData, double>)
-			Key_double = true;
-
-		this->arr = vector<vector<pair<KeyData, Data>>>(n);
-		this->table_size = n;
-		gen_iter = arr[0].begin();
-	}
-	
-
-	it insert_hash(KeyData key, Data val) {
-		int hash = get_hash(key, table_size);
-		if (arr[hash].size() >= mx_inserted) {
-			vector<vector<pair<KeyData, Data>>> temp((table_size+1)*2);
-			it tmp = operator++();
-			KeyData sav1 = tmp->first;
-			Data sav2 = tmp->second;
-			int new_tabsize = (table_size+1) * 2;
-			hash = get_hash(tmp->first, new_tabsize);
-			temp[hash].push_back(make_pair(sav1, sav2));
-			tmp=operator++();
-			while (sav1 != tmp->first && sav2 != tmp->second) {
-				hash = get_hash(tmp->first, new_tabsize);
-				temp[hash].push_back(make_pair(tmp->first, tmp->second));
-				tmp=operator++();
-			}
-			sav1 = gen_iter->first;
-			arr = temp;
-			table_size = (table_size+1)*2;
-			this->flag_for_iter = false;
-			operator++();
-			while (gen_iter->first != sav1)
-				operator++();
-		}
-
-		hash = get_hash(key, table_size);
-		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end()) {
-			if (iter->first == key) {
-				iter->second = val;
-				return iter;
-			}
-			iter++;
-		}
-
-		if (flag_for_iter==true) {
-			auto sav1 = gen_iter->first;
-			arr[hash].push_back(make_pair(key, val));
-			if (hash == b_iter) {
-				flag_for_iter = false;
-				operator++();
-			}
-				
-			while (gen_iter->first != sav1)
-				operator++();
-		}
-		else arr[hash].push_back(make_pair(key, val));		
-		iter = arr[hash].end();
-		iter--;
-		return iter;
-	}
-
-	long long size() {
-		return table_size;
-	}
-
-	long long number_elem() {
-		long long sum = 0;
-		for (int i = 0; i < table_size; i++) {
-			sum += arr[i].size();
-		}
-		return sum
-	}
-
-	bool remove_hash(KeyData key) { // removes ... a part of cacheline
-		auto hash = get_hash(key, table_size);
-		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end()) {
-			if (iter->first == key) {
-				arr[hash].erase(iter);
-				return true;
-			}
-			iter++;
-		}
-		return false;
-	}
-
-	it operator[](KeyData key) { // access to line`s data returns vector -> iterate with in: sfkjghsfjkg
-		auto hash = get_hash(key, table_size);
-		auto iter = arr[hash].begin();
-
-		while (iter != arr[hash].end()) {
-			if (iter->first == key)
-				return iter;
-			iter++;
-		}
-		Data t;
-		return insert_hash(key, t);
-	}
-
-	it search_hash(KeyData key) { // search for line with it`s key
-		auto hash = get_hash(key, table_size);
-		auto iter = arr[hash].begin();
-		while (iter != arr[hash].end()) {
-			if (iter->first == key) 
-				return iter;
-			iter++;
-		}
-		if (iter == arr[hash].end())
-			throw 123;
-	}
-
-	it operator++() {
-		auto prev = gen_iter;
-		auto gen_iter_inner = gen_iter;
-		bool flag_for_skip = false;
-		while (b_iter != table_size) {
-			gen_iter_inner = arr[b_iter].begin();
-			while (gen_iter_inner != arr[b_iter].end()) {
-				if (!flag_for_iter) {
-					gen_iter = gen_iter_inner;
-					flag_for_iter = true;
-					return gen_iter_inner;
-				}
-
-				while ((gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first)&& !flag_for_skip)
-					gen_iter_inner++;
-				flag_for_skip = true;
-				
-				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first) {
-					gen_iter = gen_iter_inner;
-					return gen_iter_inner;
-				}
-				gen_iter_inner++;
-			}
-			b_iter++;
-		}
-		b_iter = 0;
-		flag_for_iter = false;
-		while (b_iter != table_size) {
-			gen_iter_inner = arr[b_iter].begin();
-			while (gen_iter_inner != arr[b_iter].end()) {
-				if (!flag_for_iter) {
-					gen_iter = gen_iter_inner;
-					flag_for_iter = true;
-					return gen_iter_inner;
-				}
-
-				if (gen_iter_inner->second != prev->second || gen_iter_inner->first != prev->first) {
-					gen_iter = gen_iter_inner;
-					return gen_iter_inner;
-				}
-				gen_iter_inner++;
-			}
-			b_iter++;
-		}
-	}
-};
 
 
 template<class KeyData, class Data>
@@ -1009,7 +613,13 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 	}
 
 	it insertNode(it node, KeyData key, Data value) {
-		if (node == nullptr) {
+		if (node == nullptr && start_root ==node) {
+			start_root = new TreeNode(key, value);
+			return start_root;
+		}
+
+		if (node == NULL)
+		{
 			return new TreeNode(key, value);
 		}
 
@@ -1027,22 +637,52 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 
 		int balance = getBalance(node);
 
+		auto save = node;
 		if (balance > 1 && key < node->left->key) {
-			return rightRotate(node);
+			if (node == start_root)
+			{
+				start_root = rightRotate(save);
+				return start_root;
+			}
+			else
+				return rightRotate(save);
 		}
 
 		if (balance < -1 && key > node->right->key) {
-			return leftRotate(node);
+			if (node == start_root)
+			{
+				start_root = leftRotate(save);
+				return start_root;
+			}
+			else
+				return leftRotate(save);
 		}
-
+		
 		if (balance > 1 && key > node->left->key) {
-			node->left = leftRotate(node->left);
-			return rightRotate(node);
+			save->left = leftRotate(save->left);
+			if (node == start_root)
+			{
+				return start_root = rightRotate(save);
+			}
+			else
+			{
+				return rightRotate(save);
+			}
+			
 		}
 
 		if (balance < -1 && key < node->right->key) {
-			node->right = rightRotate(node->right);
-			return leftRotate(node);
+			save->right = rightRotate(save->right);
+			if (node == start_root)
+			{
+				return start_root = leftRotate(save);
+			}
+			else
+			{
+				return leftRotate(save);
+			}
+			
+			
 		}
 
 		return node;
@@ -1114,20 +754,17 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		return root;
 	}
 
-	it rightRotate(it y) {
-		it x = y->left;
-		if (x->right != nullptr) {
-			x->right->top = y;
-		}
-		it T2 = x->right;
-		y->left = T2;
-		x->right = y;
-		y->top = x;
-		x->top = y->top;
-		y->Height = 1 + max(getHeight(y->left), getHeight(y->right));
-		x->Height = 1 + max(getHeight(x->left), getHeight(x->right));
-
-		return x;
+	it rightRotate(it p) {
+		auto q = p->left;
+		p->left = q->right;
+		if (p->left != NULL)
+			p->left->top = p;
+		q->right = p;
+		q->top = p->top;
+		p->top = q;
+		p->Height = 1 + max(getHeight(p->left), getHeight(p->right));
+		q->Height = 1 + max(getHeight(q->left), getHeight(q->right));
+		return q;
 	}
 
 	int getBalance(it node) {
@@ -1137,20 +774,18 @@ class AVL_Tree : public Binary_Tree<KeyData,Data> {
 		return getHeight(node->left) - getHeight(node->right);
 	}
 
-	it leftRotate(it x) {
-		it y = x->right;
-		it T2 = y->left;
-		x->right = T2;
-		if (y->left != nullptr) {
-			y->left->top = x;
-		}
-		y->left = x;
-		x->top = y;
-		y->top = x->top;
-		x->Height = 1 + max(getHeight(x->left), getHeight(x->right));
-		y->Height = 1 + max(getHeight(y->left), getHeight(y->right));
+	it leftRotate(it q) {
+		auto p = q->right;
+		q->right = p->left;
+		if (q->right != NULL)
+			q->right->top = q;
+		p->left = q;
+		p->top = q->top;
+		q->top = p;
+		q->Height = 1 + max(getHeight(q->left), getHeight(q->right));
+		p->Height = 1 + max(getHeight(p->left), getHeight(p->right));
 
-		return y;
+		return p;
 	}
 
 	it bigRightRotate(it node) {

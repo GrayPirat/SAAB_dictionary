@@ -1,5 +1,5 @@
 #include <gtest.h>
-#include "dictionary_head.h"
+#include"Tables.h"
 
 TEST(Table, table_can_insert) {
 	Table <int, string> a;

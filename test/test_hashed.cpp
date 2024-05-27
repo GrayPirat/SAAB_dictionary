@@ -1,5 +1,5 @@
 #include <gtest.h>
-#include "dictionary_head.h"
+#include "Tables.h"
 
 TEST(Hash_Table, hash_can_insert) {
 	Hash_Table<int, string> a(200);

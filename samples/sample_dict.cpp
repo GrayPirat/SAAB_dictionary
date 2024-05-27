@@ -97,4 +97,19 @@ int main()
     cin >> n;
     cout << endl;
     calculate_insert(n);
+
+
+    /*AVL_Tree<int, int> a;
+    vector<int> vec;
+    const int N = 10;
+
+    for (int i = 0; i < N; i++) {
+        vec.push_back(vec.size());
+    }
+    auto rand_gen = mt19937(0);
+    shuffle(vec.begin(), vec.end(), rand_gen);
+    for (int i = 0; i < N; i++) {
+        a.insert(vec[i], vec[i]);
+        a.print();
+    }*/
 }

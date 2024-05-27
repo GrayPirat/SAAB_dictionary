@@ -1,4 +1,3 @@
-
 #include <gtest.h>
 #include "dictionary_head.h"
 
@@ -18,9 +17,9 @@ TEST(AVL_Tree, AVL_can_insert1000) {
 		a.insert(temp, temp);
 	}
 	/*shuffle(vec.begin(), vec.end(), rand_gen);*/
-	/*for (int i = 0; i < N; i++) {
+	for (int i = 0; i < N; i++) {
 		EXPECT_EQ(a.search(vec[i])->value, vec[i]);
-	}*/
+	}
 	EXPECT_EQ(true, true);
 }
 
@@ -69,7 +68,7 @@ TEST(AVL_Tree, AVL_can_insert16000) {
 TEST(AVL_Tree, AVL_remove1000) {
 	AVL_Tree<int, int> a;
 	vector<int> vec;
-	const int N = 10;
+	const int N = 1000;
 
 	for (int i = 0; i < N; i++) {
 		vec.push_back(vec.size());
@@ -78,6 +77,7 @@ TEST(AVL_Tree, AVL_remove1000) {
 	shuffle(vec.begin(), vec.end(), rand_gen);
 	for (int i = 0; i < N; i++) {
 		a.insert(vec[i], vec[i]);
+
 	}
 	//a.print();
 	shuffle(vec.begin(), vec.end(), rand_gen);

@@ -1,5 +1,5 @@
 #include <gtest.h>
-#include "dictionary_head.h"
+#include "Tables.h"
 
 TEST(Sorted_Table, sorTable_can_insert) {
 	Sorted_Table<int, string> a;
